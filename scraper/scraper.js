@@ -3,6 +3,7 @@
 
 const { readFileSync, readdirSync, writeFileSync } = require("fs");
 const path = require("path");
+const fixURI = require("./fix-uri");
 
 const INPUT_DIR = path.resolve("./bikeshed-data/data/anchors/");
 const OUT_FILE = path.resolve("./data.json");
@@ -25,8 +26,13 @@ const data = fileNames.reduce((data, fileName, i) => {
   process.stdout.write(`\rProcessing: ${i + 1}/${fileNames.length}`);
   const file = path.join(INPUT_DIR, fileName);
   const content = readFileSync(file, "utf8");
-  const terms = parseData(content);
-  addTermsToData(terms, data);
+  try {
+    const terms = parseData(content);
+    addTermsToData(terms, data);
+  } catch (error) {
+    console.error(`Error while processing ${fileName}`);
+    throw error;
+  }
   return data;
 }, Object.create(null));
 
@@ -43,8 +49,7 @@ writeFileSync(OUT_FILE, JSON.stringify(data, null, 2), "utf8");
  * https://github.com/tabatkins/bikeshed/blob/0da7328bb90ef81993146377e4e0fed236969c4c/bikeshed/update/updateCrossRefs.py#L313-L328
  */
 function parseData(content) {
-  const sections = content.split("-\n");
-  sections.pop(); // skip split on last`-\n`
+  const sections = content.split("\n-\n").filter(Boolean);
 
   // format each section to convert data into a usable form
   const termData = sections
@@ -64,17 +69,23 @@ function parseData(content) {
         ..._for
       ] = lines;
       const dataFor = _for.filter(Boolean);
-      return {
-        key,
-        isExported: isExported === "1",
-        type,
-        spec,
-        shortname,
-        status,
-        uri,
-        normative: normative === "1",
-        for: dataFor.length > 0 ? dataFor : undefined,
-      };
+      try {
+        return {
+          key,
+          isExported: isExported === "1",
+          type,
+          spec,
+          shortname,
+          status,
+          uri: fixURI(uri),
+          normative: normative === "1",
+          for: dataFor.length > 0 ? dataFor : undefined,
+        };
+      } catch (error) {
+        console.error("Error while processing section:");
+        console.error(lines);
+        throw error;
+      }
     });
 
   const filtered = termData
