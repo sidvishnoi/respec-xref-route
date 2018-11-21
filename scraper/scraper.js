@@ -46,7 +46,7 @@ writeFileSync(OUT_FILE, JSON.stringify(data, null, 2), "utf8");
  * @param {string} content content of an anchors data file
  *
  * The parsing is based on the file format specified at
- * https://github.com/tabatkins/bikeshed/blob/0da7328bb90ef81993146377e4e0fed236969c4c/bikeshed/update/updateCrossRefs.py#L313-L328
+ * https://github.com/tabatkins/bikeshed/blob/0da7328/bikeshed/update/updateCrossRefs.py#L313-L328
  */
 function parseData(content) {
   const sections = content.split("\n-\n").filter(Boolean);
