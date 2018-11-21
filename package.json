@@ -1,0 +1,31 @@
+{
+  "name": "specxref",
+  "version": "1.0.0",
+  "description": "Keyword based search API for CSSWG's Shepherd data, used in ReSpec.",
+  "keywords": [
+    "csswg",
+    "respec",
+    "search",
+    "shepherd",
+    "spec",
+    "w3c"
+  ],
+  "homepage": "https://github.com/sidvishnoi/specxref#readme",
+  "bugs": {
+    "url": "https://github.com/sidvishnoi/specxref/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sidvishnoi/specxref.git"
+  },
+  "license": "MIT",
+  "author": "Sid Vishnoi <sidvishnoi8@gmail.com>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4"
+  }
+}
