@@ -22,16 +22,16 @@ module.exports = function fixURI(uri) {
   if (typeof uri !== "string") {
     throw new TypeError(`Expected "string", but got "${typeof uri}"`);
   }
-  let temp = trie;
+  let iter = trie;
   let prefixLength = 0;
   for (const ch of uri) {
     ++prefixLength;
-    const node = temp.children[ch];
-    if (node !== undefined) {
+    if (iter.children.has(ch)) {
+      const node = iter.children.get(ch);
       if (node.isEnd) {
         return uri.substr(prefixLength);
       }
-      temp = node;
+      iter = node;
     } else {
       break;
     }
@@ -43,12 +43,15 @@ module.exports = function fixURI(uri) {
   return uri;
 };
 
+/** @param {string[]} strs */
 function buildTrie(strs) {
   class TrieNode {
+    /** @param {string} ch */
     constructor(ch) {
       this.ch = ch;
       this.isEnd = false;
-      this.children = Object.create(null);
+      /** @type Map<string, TrieNode> */
+      this.children = new Map();
     }
   }
 
@@ -56,12 +59,13 @@ function buildTrie(strs) {
   for (const str of strs) {
     let temp = rootNode;
     for (const ch of str) {
-      let node = temp.children[ch];
-      if (node === undefined) {
-        node = new TrieNode(ch);
-        temp.children[ch] = node;
+      if (!temp.children.has(ch)) {
+        const node = new TrieNode(ch);
+        temp.children.set(ch, node);
+        temp = node;
+      } else {
+        temp = temp.children.get(ch);
       }
-      temp = node;
     }
     temp.isEnd = true;
   }
