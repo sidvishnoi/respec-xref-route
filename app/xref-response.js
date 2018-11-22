@@ -19,7 +19,19 @@ const CONCEPT_TYPES = new Set([
   "event",
 ]);
 
-function xrefResponse({ options, keys }) {
+const specStatusAlias = new Map([
+  ["draft", "current"],
+  ["official", "snapshot"],
+]);
+
+const defaultOptions = {
+  fields: ["spec", "type", "for", "normative", "uri"],
+  spec_type: ["draft", "official"],
+  types: [], // any
+};
+
+function xrefResponse({ options, keys = [] }) {
+  options = { ...defaultOptions, ...options };
   const response = Object.create(null);
 
   for (const entry of keys) {
@@ -34,7 +46,9 @@ function xrefResponse({ options, keys }) {
       continue;
     }
 
-    const termData = data[term].filter(item => filter(item, entry));
+    let termData = data[term].filter(item => filter(item, entry, options));
+    termData = filterBySpecType(termData, options.spec_type);
+    termData = termData.map(item => pickFields(item, options.fields));
 
     if (!response[term]) {
       response[term] = termData;
@@ -54,14 +68,15 @@ function xrefResponse({ options, keys }) {
   return response;
 }
 
-function filter(item, { specs, types, for: forContext }) {
+function filter(item, { specs, types, for: forContext }, options) {
   let isAcceptable = true;
 
   if (Array.isArray(specs) && specs.length > 0) {
     isAcceptable = specs.includes(item.shortname);
   }
 
-  if (isAcceptable && Array.isArray(types) && types.length > 0) {
+  types = Array.isArray(types) && types.length > 0 ? types : options.types;
+  if (isAcceptable && types.length > 0) {
     isAcceptable = types.includes(item.type);
     if (!isAcceptable) {
       if (types.includes("_IDL_")) {
@@ -77,6 +92,27 @@ function filter(item, { specs, types, for: forContext }) {
   }
 
   return isAcceptable;
+}
+
+function filterBySpecType(data, specTypes) {
+  if (specTypes.length === 0) {
+    return data;
+  }
+
+  const prefereredType = specStatusAlias.get(specTypes[0]) || specTypes[0];
+  const filteredData = data.filter(item => item.status === prefereredType);
+
+  if (
+    specTypes.length === 1 ||
+    (specTypes.length === 2 && filteredData.length !== 0)
+  ) {
+    return filteredData;
+  }
+  return data;
+}
+
+function pickFields(item, fields) {
+  return fields.reduce((res, field) => (res[field] = item[field], res), {});
 }
 
 function getUnique(termData) {
