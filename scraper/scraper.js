@@ -10,15 +10,16 @@ const OUT_FILE = path.resolve("./data.json");
 
 const SUPPORTED_TYPES = new Set([
   "attribute",
+  "dfn",
   "dict-member",
   "dictionary",
-  "enum",
+  "element",
   "enum-value",
+  "enum",
+  "event",
   "interface",
   "method",
-  "dfn",
-  "event",
-  "element",
+  "typedef",
 ]);
 
 console.log(`Reading files from ${INPUT_DIR}`);
