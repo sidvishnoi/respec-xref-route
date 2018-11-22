@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
-rm -rf bikeshed-data
-git clone https://github.com/tabatkins/bikeshed-data.git --depth 1
+if [ -d "bikeshed-data" ]; then
+  cd bikeshed-data
+  git pull origin master
+  cd ..
+else
+  git clone https://github.com/tabatkins/bikeshed-data.git
+fi
 node scraper/scraper.js # writes data.json in cwd
