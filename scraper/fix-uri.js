@@ -4,8 +4,7 @@
 // gets converted to:
 // workers.html#abstractworker
 // as https://html.spec.whatwg.org/multipage/ belongs to `spec-urls.txt`
-//
-// We'll use a Trie for an efficient prefix search
+
 const { readFileSync } = require("fs");
 const path = require("path");
 
@@ -15,6 +14,7 @@ const URIs = new Set(
     .filter(Boolean),
 );
 
+// We'll use a Trie for an efficient prefix search
 const trie = buildTrie(URIs);
 
 let warningCount = 0;
