@@ -1,5 +1,5 @@
 {
-  "name": "specxref",
+  "name": "respec-xref",
   "version": "1.0.0",
   "description": "Keyword based search API for CSSWG's Shepherd data, used in ReSpec.",
   "keywords": [
@@ -10,13 +10,13 @@
     "spec",
     "w3c"
   ],
-  "homepage": "https://github.com/sidvishnoi/specxref#readme",
+  "homepage": "https://github.com/sidvishnoi/respec-xref#readme",
   "bugs": {
-    "url": "https://github.com/sidvishnoi/specxref/issues"
+    "url": "https://github.com/sidvishnoi/respec-xref/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sidvishnoi/specxref.git"
+    "url": "https://github.com/sidvishnoi/respec-xref.git"
   },
   "license": "MIT",
   "author": "Sid Vishnoi <sidvishnoi8@gmail.com>",
