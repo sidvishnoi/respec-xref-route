@@ -8,7 +8,7 @@ const fixURI = require("./fix-uri");
 const INPUT_DIR = path.resolve("./bikeshed-data/data/anchors/");
 const OUT_FILE = path.resolve("./data.json");
 
-const IDL_TYPES = new Set([
+const SUPPORTED_TYPES = new Set([
   "attribute",
   "dict-member",
   "dictionary",
@@ -16,8 +16,10 @@ const IDL_TYPES = new Set([
   "enum-value",
   "interface",
   "method",
+  "dfn",
+  "event",
+  "element",
 ]);
-const DFN_TYPES = new Set(["dfn", "event", "element"]);
 
 console.log(`Reading files from ${INPUT_DIR}`);
 const fileNames = readdirSync(INPUT_DIR);
@@ -89,11 +91,12 @@ function parseData(content) {
     });
 
   const filtered = termData
-    .filter(term => term.isExported)
-    .filter(term => IDL_TYPES.has(term.type) || DFN_TYPES.has(term.type));
+    .filter(term => term.isExported && SUPPORTED_TYPES.has(term.type))
 
   // return unique data
-  return [...new Set(filtered.map(JSON.stringify))].map(JSON.parse);
+  const unique = new Set(filtered.map(JSON.stringify));
+  const result = [...unique].map(JSON.parse);
+  return result;
 }
 
 function addTermsToData(terms, data) {
