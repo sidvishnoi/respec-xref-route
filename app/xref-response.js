@@ -12,12 +12,7 @@ const IDL_TYPES = new Set([
   "typedef",
 ]);
 
-const CONCEPT_TYPES = new Set([
-  "_CONCEPT_",
-  "dfn",
-  "element",
-  "event",
-]);
+const CONCEPT_TYPES = new Set(["_CONCEPT_", "dfn", "element", "event"]);
 
 const specStatusAlias = new Map([
   ["draft", "current"],
@@ -92,7 +87,7 @@ function filter(item, entry, options) {
 }
 
 function filterBySpecType(data, specTypes) {
-  if (!specTypes.length)  return data;
+  if (!specTypes.length) return data;
 
   const prefereredType = specStatusAlias.get(specTypes[0]) || specTypes[0];
   const filteredData = data.filter(item => item.status === prefereredType);
@@ -102,7 +97,7 @@ function filterBySpecType(data, specTypes) {
 }
 
 function pickFields(item, fields) {
-  return fields.reduce((res, field) => (res[field] = item[field], res), {});
+  return fields.reduce((res, field) => ((res[field] = item[field]), res), {});
 }
 
 function getUnique(termData) {
