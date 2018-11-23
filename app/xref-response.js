@@ -36,9 +36,7 @@ function xrefResponse({ options, keys = [] }) {
 
   for (const entry of keys) {
     const { term: inputTerm, types } = entry;
-    const isIDL = Array.isArray(types)
-      && types.length > 0
-      && types.some(t => IDL_TYPES.has(t));
+    const isIDL = Array.isArray(types) && types.some(t => IDL_TYPES.has(t));
 
     const term = isIDL ? inputTerm : inputTerm.toLowerCase();
 
@@ -46,15 +44,12 @@ function xrefResponse({ options, keys = [] }) {
       continue;
     }
 
-    let termData = data[term].filter(item => filter(item, entry, options));
-    termData = filterBySpecType(termData, options.spec_type);
-    termData = termData.map(item => pickFields(item, options.fields));
+    const termData = data[term].filter(item => filter(item, entry, options));
+    const prefereredData = filterBySpecType(termData, options.spec_type);
+    const result = prefereredData.map(item => pickFields(item, options.fields));
 
-    if (!response[term]) {
-      response[term] = termData;
-    } else {
-      response[term].push(...termData);
-    }
+    if (!response[term]) response[term] = [];
+    response[term].push(...result);
   }
 
   for (const term in response) {
@@ -69,21 +64,21 @@ function xrefResponse({ options, keys = [] }) {
 }
 
 function filter(item, entry, options) {
-  const { specs, for: forContext } = entry;
-  let { types } = entry;
+  const { specs, for: forContext, types } = entry;
   let isAcceptable = true;
 
   if (Array.isArray(specs) && specs.length) {
     isAcceptable = specs.includes(item.shortname);
   }
 
-  types = Array.isArray(types) && types.length ? types : options.types;
-  if (isAcceptable && types.length) {
-    isAcceptable = types.includes(item.type);
+  const derivedTypes =
+    Array.isArray(types) && types.length ? types : options.types;
+  if (isAcceptable && derivedTypes.length) {
+    isAcceptable = derivedTypes.includes(item.type);
     if (!isAcceptable) {
-      if (types.includes("_IDL_")) {
+      if (derivedTypes.includes("_IDL_")) {
         isAcceptable = IDL_TYPES.has(item.type);
-      } else if (types.includes("_CONCEPT_")) {
+      } else if (derivedTypes.includes("_CONCEPT_")) {
         isAcceptable = CONCEPT_TYPES.has(item.type);
       }
     }
@@ -97,20 +92,13 @@ function filter(item, entry, options) {
 }
 
 function filterBySpecType(data, specTypes) {
-  if (!specTypes.length) {
-    return data;
-  }
+  if (!specTypes.length)  return data;
 
   const prefereredType = specStatusAlias.get(specTypes[0]) || specTypes[0];
   const filteredData = data.filter(item => item.status === prefereredType);
 
-  if (
-    specTypes.length === 1 ||
-    (specTypes.length === 2 && filteredData.length !== 0)
-  ) {
-    return filteredData;
-  }
-  return data;
+  const hasPrefereredData = specTypes.length === 2 && filteredData.length;
+  return specTypes.length === 1 || hasPrefereredData ? filteredData : data;
 }
 
 function pickFields(item, fields) {
