@@ -25,8 +25,8 @@ const defaultOptions = {
   types: [], // any
 };
 
-function xrefResponse({ options, keys = [] }) {
-  options = { ...defaultOptions, ...options };
+function xrefResponse({ options: opts = {}, keys = [] }) {
+  const options = { ...defaultOptions, ...opts };
   const response = Object.create(null);
 
   for (const entry of keys) {
@@ -97,7 +97,10 @@ function filterBySpecType(data, specTypes) {
 }
 
 function pickFields(item, fields) {
-  return fields.reduce((res, field) => ((res[field] = item[field]), res), {});
+  return fields.reduce((result, field) => {
+    result[field] = item[field];
+    return result;
+  }, {});
 }
 
 function getUnique(termData) {
