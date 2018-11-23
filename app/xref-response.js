@@ -58,7 +58,7 @@ function xrefResponse({ options, keys = [] }) {
   }
 
   for (const term in response) {
-    if (response[term].length > 0) {
+    if (response[term].length) {
       response[term] = getUnique(response[term]);
     } else {
       delete response[term];
@@ -68,15 +68,17 @@ function xrefResponse({ options, keys = [] }) {
   return response;
 }
 
-function filter(item, { specs, types, for: forContext }, options) {
+function filter(item, entry, options) {
+  const { specs, for: forContext } = entry;
+  let { types } = entry;
   let isAcceptable = true;
 
-  if (Array.isArray(specs) && specs.length > 0) {
+  if (Array.isArray(specs) && specs.length) {
     isAcceptable = specs.includes(item.shortname);
   }
 
-  types = Array.isArray(types) && types.length > 0 ? types : options.types;
-  if (isAcceptable && types.length > 0) {
+  types = Array.isArray(types) && types.length ? types : options.types;
+  if (isAcceptable && types.length) {
     isAcceptable = types.includes(item.type);
     if (!isAcceptable) {
       if (types.includes("_IDL_")) {
@@ -95,7 +97,7 @@ function filter(item, { specs, types, for: forContext }, options) {
 }
 
 function filterBySpecType(data, specTypes) {
-  if (specTypes.length === 0) {
+  if (!specTypes.length) {
     return data;
   }
 
