@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // Reads and parses anchor data files from bikeshed-data repository
 // and writes data.json containing parsed and formatted data
 
@@ -6,7 +8,7 @@ const path = require("path");
 const fixURI = require("./fix-uri");
 
 const INPUT_DIR = path.resolve("./bikeshed-data/data/anchors/");
-const OUT_FILE = path.resolve("./data.json");
+const OUT_FILE = path.resolve("./xref-data.json");
 
 const SUPPORTED_TYPES = new Set([
   "attribute",
@@ -52,7 +54,10 @@ writeFileSync(OUT_FILE, JSON.stringify(data, null, 2), "utf8");
  * https://github.com/tabatkins/bikeshed/blob/0da7328/bikeshed/update/updateCrossRefs.py#L313-L328
  */
 function parseData(content) {
-  const sections = content.split("\n-\n").filter(Boolean);
+  const re = /\r\n|\n\r|\n|\r/g; // because of Windows!
+  const normalizedContent = content.replace(re, "\n");
+
+  const sections = normalizedContent.split("\n-\n").filter(Boolean);
 
   // format each section to convert data into a usable form
   const termData = sections

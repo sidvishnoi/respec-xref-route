@@ -8,11 +8,10 @@
 const { readFileSync } = require("fs");
 const path = require("path");
 
-const URIs = new Set(
-  readFileSync(path.resolve("./scraper/spec-urls.txt"), "utf8")
-    .split("\n")
-    .filter(Boolean),
-);
+const urlListFile = path.resolve(__dirname + "/spec-urls.txt");
+const URIs = readFileSync(urlListFile, "utf8")
+  .split("\n")
+  .filter(Boolean);
 
 // We'll use a Trie for an efficient prefix search
 const trie = buildTrie(URIs);
