@@ -1,5 +1,3 @@
-const data = require("../data.json");
-
 const IDL_TYPES = new Set([
   "_IDL_",
   "attribute",
@@ -25,7 +23,7 @@ const defaultOptions = {
   types: [], // any
 };
 
-function xrefResponse({ options: opts = {}, keys = [] }) {
+function xrefResponse({ options: opts = {}, keys = [] }, data) {
   const options = { ...defaultOptions, ...opts };
   const response = Object.create(null);
 

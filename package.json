@@ -1,5 +1,5 @@
 {
-  "name": "respec-xref",
+  "name": "respec-xref-route",
   "version": "1.0.0",
   "description": "Keyword based search API for CSSWG's Shepherd data, used in ReSpec.",
   "keywords": [
@@ -20,13 +20,10 @@
   },
   "license": "MIT",
   "author": "Sid Vishnoi <sidvishnoi8@gmail.com>",
-  "main": "app/index.js",
+  "main": "index.js",
+  "bin": "./scraper/scrape.sh",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app/index.js"
-  },
-  "dependencies": {
-    "body-parser": "^1.18.3",
-    "express": "^4.16.4"
+    "scrape": "./scraper/scrape.sh",
+    "start": "node index.js"
   }
 }
