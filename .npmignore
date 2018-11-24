@@ -1,0 +1,6 @@
+.editorconfig
+.gitattributes
+bikeshed-data
+node_modules
+package-lock.json
+xref-data.json
