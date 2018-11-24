@@ -23,7 +23,7 @@ const defaultOptions = {
   types: [], // any
 };
 
-function xrefResponse({ options: opts = {}, keys = [] }, data) {
+function createResponseBody({ options: opts = {}, keys = [] }, data) {
   const options = { ...defaultOptions, ...opts };
   const response = Object.create(null);
 
@@ -106,4 +106,4 @@ function getUnique(termData) {
   return [...unique].map(JSON.parse);
 }
 
-module.exports = xrefResponse;
+module.exports = createResponseBody;
