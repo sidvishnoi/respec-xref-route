@@ -10,13 +10,13 @@
     "spec",
     "w3c"
   ],
-  "homepage": "https://github.com/sidvishnoi/respec-xref#readme",
+  "homepage": "https://github.com/sidvishnoi/respec-xref-route#readme",
   "bugs": {
-    "url": "https://github.com/sidvishnoi/respec-xref/issues"
+    "url": "https://github.com/sidvishnoi/respec-xref-route/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sidvishnoi/respec-xref.git"
+    "url": "https://github.com/sidvishnoi/respec-xref-route.git"
   },
   "license": "MIT",
   "author": "Sid Vishnoi <sidvishnoi8@gmail.com>",
