@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // Reads and parses anchor data files from bikeshed-data repository
 // and writes data.json containing parsed and formatted data
 
@@ -6,7 +8,7 @@ const path = require("path");
 const fixURI = require("./fix-uri");
 
 const INPUT_DIR = path.resolve("./bikeshed-data/data/anchors/");
-const OUT_FILE = path.resolve("./data.json");
+const OUT_FILE = path.resolve("./xref-data.json");
 
 const SUPPORTED_TYPES = new Set([
   "attribute",

@@ -21,9 +21,12 @@
   "license": "MIT",
   "author": "Sid Vishnoi <sidvishnoi8@gmail.com>",
   "main": "index.js",
-  "bin": "./scraper/scrape.sh",
+  "bin": {
+    "fetch-bs-data": "./scraper/scrape.sh",
+    "convert-bs-data": "./scraper/scraper.js"
+  },
   "scripts": {
-    "scrape": "./scraper/scrape.sh",
-    "start": "node index.js"
+    "fetch": "./scraper/scrape.sh",
+    "convert": "./scraper/scraper.js"
   }
 }
