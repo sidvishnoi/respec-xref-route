@@ -16,7 +16,6 @@ const URIs = readFileSync(urlListFile, "utf8")
 // We'll use a Trie for an efficient prefix search
 const trie = buildTrie(URIs);
 
-let warningCount = 0;
 module.exports = function fixURI(uri) {
   if (typeof uri !== "string") {
     throw new TypeError(`Expected "string", but got "${typeof uri}"`);
@@ -35,10 +34,6 @@ module.exports = function fixURI(uri) {
       break;
     }
   }
-  console.warn(
-    `(fixURI#${++warningCount}): Cannot resolve url: ${uri}. ` +
-      "Please add a base url to spec-urls.txt",
-  );
   return uri;
 };
 
