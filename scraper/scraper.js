@@ -27,8 +27,9 @@ const SUPPORTED_TYPES = new Set([
 console.log(`Reading files from ${INPUT_DIR}`);
 const fileNames = readdirSync(INPUT_DIR);
 
-const data = fileNames.reduce((data, fileName, i) => {
-  process.stdout.write(`\rProcessing: ${i + 1}/${fileNames.length}`);
+console.log(`Processing ${fileNames.length} files...`);
+const errorURIs = [];
+const data = fileNames.reduce((data, fileName) => {
   const file = path.join(INPUT_DIR, fileName);
   const content = readFileSync(file, "utf8");
   try {
@@ -41,7 +42,16 @@ const data = fileNames.reduce((data, fileName, i) => {
   return data;
 }, Object.create(null));
 
-console.log(`\nWriting data file to ${OUT_FILE}`);
+if (errorURIs.length) {
+  console.error(
+    `[fixURI]: Failed to resolve base url. (x${errorURIs.length})`,
+    "Please add base url to spec-urls.txt for the following urls:"
+  );
+  console.error(errorURIs.join("\n"));
+  process.exit(1);
+}
+
+console.log(`Writing data file to ${OUT_FILE}`);
 writeFileSync(OUT_FILE, JSON.stringify(data, null, 2), "utf8");
 
 /**
@@ -78,6 +88,10 @@ function parseData(content) {
       ] = lines;
       const dataFor = _for.filter(Boolean);
       try {
+        const normalizedURI = fixURI(uri);
+        if (uri === normalizedURI) {
+          errorURIs.push(uri);
+        }
         return {
           key,
           isExported: isExported === "1",
@@ -85,7 +99,7 @@ function parseData(content) {
           spec,
           shortname,
           status,
-          uri: fixURI(uri),
+          uri: normalizedURI,
           normative: normative === "1",
           for: dataFor.length > 0 ? dataFor : undefined,
         };
