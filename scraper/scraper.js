@@ -65,7 +65,10 @@ async function main() {
   await writeFileAsync(OUT_FILE, JSON.stringify(data, null, 2), "utf8");
 }
 
-main().catch(console.error);
+main().catch(error => {
+  console.error(error);
+  process.exit(1);
+});
 
 /**
  * Parse and format the contents of an anchors file
