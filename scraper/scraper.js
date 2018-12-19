@@ -28,7 +28,7 @@ const SUPPORTED_TYPES = new Set([
   "typedef",
 ]);
 
-(async function main() {
+async function main() {
   console.log(`Reading files from ${INPUT_DIR}`);
   const fileNames = readdirSync(INPUT_DIR);
 
@@ -63,7 +63,9 @@ const SUPPORTED_TYPES = new Set([
 
   console.log(`Writing data file to ${OUT_FILE}`);
   await writeFileAsync(OUT_FILE, JSON.stringify(data, null, 2), "utf8");
-})();
+}
+
+main().catch(console.error);
 
 /**
  * Parse and format the contents of an anchors file
