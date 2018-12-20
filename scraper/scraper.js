@@ -142,8 +142,9 @@ function parseData(content, errorURIs, trie) {
       }
     });
 
-  const filtered = termData
-    .filter(term => term.isExported && SUPPORTED_TYPES.has(term.type))
+  const filtered = termData.filter(
+    term => term.isExported && SUPPORTED_TYPES.has(term.type)
+  );
 
   // return unique data
   const unique = new Set(filtered.map(JSON.stringify));
