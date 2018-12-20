@@ -118,12 +118,13 @@ function parseData(content, errorURIs, trie) {
       ] = lines;
       const dataFor = _for.filter(Boolean);
       try {
-        const { prefix: normalizedURI, isProper } = trie.prefix(uri);
-        if (!isProper && !trie.words.has(normalizedURI)) {
+        const { prefix, isProper } = trie.prefix(uri);
+        if (!isProper && !trie.words.has(prefix)) {
           // the second check above is redundant,
           // but serves as an additional safety measure
           errorURIs.push(uri);
         }
+        const normalizedURI = uri.replace(prefix, "");
         return {
           key,
           isExported: isExported === "1",
