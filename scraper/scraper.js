@@ -6,11 +6,12 @@
 const { readFile, readdirSync, writeFile } = require("fs");
 const path = require("path");
 const { promisify } = require("util");
-const fixURI = require("./fix-uri");
+const { CompactPrefixTree: Trie } = require("compact-prefix-tree");
 
 const readFileAsync = promisify(readFile);
 const writeFileAsync = promisify(writeFile);
 
+const URL_LIST = path.resolve(__dirname + "/spec-urls.txt");
 const INPUT_DIR = path.resolve("./bikeshed-data/data/anchors/");
 const OUT_FILE = path.resolve("./xref-data.json");
 
@@ -29,6 +30,17 @@ const SUPPORTED_TYPES = new Set([
 ]);
 
 async function main() {
+  console.log(`Reading URL list from ${URL_LIST}`);
+  const urlFileContent = await readFileAsync(URL_LIST, "utf8");
+  const urls = urlFileContent.split("\n").filter(Boolean);
+  // We'll use a Trie for an efficient prefix search,
+  // to convert long uri to short uri
+  // eg: https://html.spec.whatwg.org/multipage/workers.html#abstractworker
+  // gets converted to:
+  // workers.html#abstractworker
+  // as https://html.spec.whatwg.org/multipage/ belongs to `spec-urls.txt`
+  const trie = new Trie(urls);
+
   console.log(`Reading files from ${INPUT_DIR}`);
   const fileNames = readdirSync(INPUT_DIR);
 
@@ -43,7 +55,7 @@ async function main() {
   const errorURIs = [];
   const data = fileNames.reduce((data, fileName, i) => {
     try {
-      const terms = parseData(content[i], errorURIs);
+      const terms = parseData(content[i], errorURIs, trie);
       addTermsToData(terms, data);
     } catch (error) {
       console.error(`Error while processing ${fileName}`);
@@ -76,11 +88,12 @@ main().catch(error => {
  *
  * @param {string} content content of an anchors data file
  * @param {string[]} errorURIs list of uri where fixUri fails
+ * @param {CompactPrefixTree} trie prefix tree for URL resolution
  *
  * The parsing is based on the file format specified at
  * https://github.com/tabatkins/bikeshed/blob/0da7328/bikeshed/update/updateCrossRefs.py#L313-L328
  */
-function parseData(content, errorURIs) {
+function parseData(content, errorURIs, trie) {
   const re = /\r\n|\n\r|\n|\r/g; // because of Windows!
   const normalizedContent = content.replace(re, "\n");
 
@@ -105,8 +118,10 @@ function parseData(content, errorURIs) {
       ] = lines;
       const dataFor = _for.filter(Boolean);
       try {
-        const normalizedURI = fixURI(uri);
-        if (uri === normalizedURI) {
+        const { prefix: normalizedURI, isProper } = trie.prefix(uri);
+        if (!isProper && !trie.words.has(normalizedURI)) {
+          // the second check above is redundant,
+          // but serves as an additional safety measure
           errorURIs.push(uri);
         }
         return {

@@ -28,5 +28,8 @@
   "scripts": {
     "fetch": "./scraper/scrape.sh",
     "convert": "./scraper/scraper.js"
+  },
+  "dependencies": {
+    "compact-prefix-tree": "^1.0.0"
   }
 }
