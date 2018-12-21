@@ -11,7 +11,7 @@ const { CompactPrefixTree: Trie } = require("compact-prefix-tree");
 const readFileAsync = promisify(readFile);
 const writeFileAsync = promisify(writeFile);
 
-const URL_LIST = path.resolve(__dirname + "/spec-urls.txt");
+const URL_LIST = path.join(__dirname, "spec-urls.txt");
 const INPUT_DIR = path.resolve("./bikeshed-data/data/anchors/");
 const OUT_FILE = path.resolve("./xref-data.json");
 
