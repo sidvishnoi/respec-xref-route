@@ -63,9 +63,9 @@ async function main() {
   }, Object.create(null));
 
   if (errorURIs.length) {
+    // ideally never happens. keeping it to prevent database corruption.
     console.error(
-      `[fixURI]: Failed to resolve base url. (x${errorURIs.length})`,
-      "Please add base url to spec-urls.txt for the following urls:"
+      `[fixURI]: Failed to resolve base url. (x${errorURIs.length})`
     );
     console.error(errorURIs.join("\n"));
     process.exit(1);
