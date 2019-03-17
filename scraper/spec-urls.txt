@@ -58,6 +58,7 @@ https://drafts.csswg.org/css-multicol-1/
 https://drafts.csswg.org/css-multicol-2/
 https://drafts.csswg.org/css-namespaces-3/
 https://drafts.csswg.org/css-nav-1/
+https://drafts.csswg.org/css-nesting-1/
 https://drafts.csswg.org/css-overflow-3/
 https://drafts.csswg.org/css-overflow-4/
 https://drafts.csswg.org/css-overscroll-behavior-1/
@@ -138,6 +139,7 @@ https://url.spec.whatwg.org/
 https://w3c.github.io/FileAPI/
 https://w3c.github.io/fingerprinting-guidance/
 https://w3c.github.io/IndexedDB/
+https://w3c.github.io/network-error-logging/
 https://w3c.github.io/permissions/
 https://w3c.github.io/reporting/
 https://w3c.github.io/sensors/
@@ -168,6 +170,7 @@ https://www.w3.org/TR/css-2017/
 https://www.w3.org/TR/css-2018/
 https://www.w3.org/TR/css-beijing/
 https://www.w3.org/TR/css-box-3/
+https://www.w3.org/TR/css-break-4/
 https://www.w3.org/TR/css-cascade-3/
 https://www.w3.org/TR/css-cascade-4/
 https://www.w3.org/TR/css-color-4/
@@ -258,6 +261,7 @@ https://www.w3.org/TR/IndexedDB/
 https://www.w3.org/TR/mediaqueries-4/
 https://www.w3.org/TR/mixed-content/
 https://www.w3.org/TR/motion-1/
+https://www.w3.org/TR/network-error-logging/
 https://www.w3.org/TR/permissions/
 https://www.w3.org/TR/referrer-policy/
 https://www.w3.org/TR/screen-orientation/
