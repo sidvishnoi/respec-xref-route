@@ -36,7 +36,7 @@ async function main() {
   // eg: https://html.spec.whatwg.org/multipage/workers.html#abstractworker
   // gets converted to:
   // workers.html#abstractworker
-  // as https://html.spec.whatwg.org/multipage/ belongs to `spec-urls.txt`
+  // as https://html.spec.whatwg.org/multipage/ belongs to `urls`
   const trie = new Trie(urls);
 
   console.log(`Reading files from ${INPUT_DIR}`);
