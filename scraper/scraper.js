@@ -11,7 +11,7 @@ const { CompactPrefixTree: Trie } = require("compact-prefix-tree");
 const readFileAsync = promisify(readFile);
 const writeFileAsync = promisify(writeFile);
 
-const URL_LIST = path.join(__dirname, "spec-urls.txt");
+const SPECS_JSON = path.resolve("./bikeshed-data/data/specs.json");
 const INPUT_DIR = path.resolve("./bikeshed-data/data/anchors/");
 const OUT_FILE = path.resolve("./xref-data.json");
 
@@ -30,9 +30,7 @@ const SUPPORTED_TYPES = new Set([
 ]);
 
 async function main() {
-  console.log(`Reading URL list from ${URL_LIST}`);
-  const urlFileContent = await readFileAsync(URL_LIST, "utf8");
-  const urls = urlFileContent.split("\n").filter(Boolean);
+  const urls = await getUrlList();
   // We'll use a Trie for an efficient prefix search,
   // to convert long uri to short uri
   // eg: https://html.spec.whatwg.org/multipage/workers.html#abstractworker
@@ -165,4 +163,16 @@ function normalizeKey(key, type) {
     return key.replace(/^"|"$/g, "");
   }
   return key;
+}
+
+async function getUrlList() {
+  console.log(`Getting URL list from ${SPECS_JSON}`);
+  const urlFileContent = await readFileAsync(SPECS_JSON, "utf8");
+  const specsData = JSON.parse(urlFileContent);
+  const specUrls = Object.values(specsData).reduce((urls, spec) => {
+    if (spec.current_url) urls.add(spec.current_url);
+    if (spec.snapshot_url) urls.add(spec.snapshot_url);
+    return urls;
+  }, new Set());
+  return [...specUrls].sort();
 }
