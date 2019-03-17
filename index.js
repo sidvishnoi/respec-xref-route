@@ -18,7 +18,7 @@ const specStatusAlias = new Map([
 ]);
 
 const defaultOptions = {
-  fields: ["spec", "type", "for", "normative", "uri"],
+  fields: ["spec", "type", "for", "normative", "uri", "shortname"],
   spec_type: ["draft", "official"],
   types: [], // any
 };
