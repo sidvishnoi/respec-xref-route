@@ -126,7 +126,7 @@ function parseData(content, errorURIs, trie) {
         }
         const normalizedURI = uri.replace(prefix, "");
         return {
-          key,
+          key: normalizeKey(key, type),
           isExported: isExported === "1",
           type,
           spec,
@@ -158,4 +158,11 @@ function addTermsToData(terms, data) {
     if (!data[key]) data[key] = [];
     data[key].push(termData);
   }
+}
+
+function normalizeKey(key, type) {
+  if (type === "enum-value") {
+    return key.replace(/^"|"$/g, "");
+  }
+  return key;
 }
