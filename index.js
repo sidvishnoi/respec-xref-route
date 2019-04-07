@@ -26,9 +26,34 @@ const defaultOptions = {
   types: [], // any
 };
 
+/**
+ * @typedef {{
+    [term: string]: {
+      "type": string;
+      "spec": string;
+      "shortname": string;
+      status: "snapshot" | "current";
+      uri: string;
+      normative: boolean;
+      for?: string[];
+    }[]
+  }} XrefData
+ * @type {Map<"xref", XrefData>}
+ */
 const cache = new Map();
 
+/**
+ * @typedef {{
+    term: string;
+    types?: string[];
+    specs?: string[];
+    for?: string;
+  }} XrefRequestEntry
+ * @param {XrefRequestEntry[]} keys
+ * @param {typeof<defaultOptions>} opts
+ */
 function xrefSearch(keys = [], opts = {}) {
+  /** @type {XrefData} */
   const data = getData('xref', 'xref.json');
   const options = { ...defaultOptions, ...opts };
   const response = Object.create(null);
