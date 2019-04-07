@@ -1,6 +1,6 @@
 .editorconfig
 .gitattributes
-bikeshed-data
+.github
 node_modules
 package-lock.json
-xref-data.json
+data

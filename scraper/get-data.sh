@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+mkdir -p data/xref
+cd data
 if [ -d "bikeshed-data" ]; then
   cd bikeshed-data
   git pull origin master

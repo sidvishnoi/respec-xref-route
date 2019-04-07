@@ -1,3 +1,6 @@
+const path = require("path");
+const { readFileSync } = require("fs");
+
 const IDL_TYPES = new Set([
   "_IDL_",
   "attribute",
@@ -23,7 +26,10 @@ const defaultOptions = {
   types: [], // any
 };
 
-function createResponseBody({ options: opts = {}, keys = [] }, data) {
+const cache = new Map();
+
+function xrefSearch(keys = [], opts = {}) {
+  const data = getData('xref', 'xref.json');
   const options = { ...defaultOptions, ...opts };
   const response = Object.create(null);
 
@@ -103,7 +109,22 @@ function pickFields(item, fields) {
 
 function getUnique(termData) {
   const unique = new Set(termData.map(JSON.stringify));
-  return [...unique].map(JSON.parse);
+  return [...unique].map(strData => JSON.parse(strData));
 }
 
-module.exports = createResponseBody;
+function getData(key, filename) {
+  if (cache.has(key)) {
+    return cache.get(key);
+  }
+
+  const dataFile = path.resolve(__dirname, `../../data/xref/${filename}`);
+  const text = readFileSync(dataFile, "utf8");
+  const data = JSON.parse(text);
+  cache.set(key, data);
+  return data;
+}
+
+module.exports = {
+  cache,
+  xrefSearch,
+};

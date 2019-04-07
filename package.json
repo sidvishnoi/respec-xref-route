@@ -22,12 +22,12 @@
   "author": "Sid Vishnoi <sidvishnoi8@gmail.com>",
   "main": "index.js",
   "bin": {
-    "fetch-bs-data": "./scraper/scrape.sh",
-    "convert-bs-data": "./scraper/scraper.js"
+    "fetch-bs-data": "./scraper/get-data.sh",
+    "convert-bs-data": "./scraper/process-data.js"
   },
   "scripts": {
-    "fetch": "./scraper/scrape.sh",
-    "convert": "./scraper/scraper.js"
+    "fetch": "./scraper/get-data.sh",
+    "convert": "./scraper/process-data.js"
   },
   "dependencies": {
     "compact-prefix-tree": "^1.0.0"
