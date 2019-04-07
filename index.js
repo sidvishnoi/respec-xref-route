@@ -42,6 +42,9 @@ const defaultOptions = {
  */
 const cache = new Map();
 
+// load initial data and cache it
+getData('xref', 'xref.json');
+
 /**
  * @typedef {{
     term: string;
