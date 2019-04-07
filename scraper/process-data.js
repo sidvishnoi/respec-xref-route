@@ -11,9 +11,9 @@ const { CompactPrefixTree: Trie } = require("compact-prefix-tree");
 const readFileAsync = promisify(readFile);
 const writeFileAsync = promisify(writeFile);
 
-const SPECS_JSON = path.resolve("./bikeshed-data/data/specs.json");
-const INPUT_DIR = path.resolve("./bikeshed-data/data/anchors/");
-const OUT_FILE = path.resolve("./xref-data.json");
+const SPECS_JSON = path.resolve("./data/bikeshed-data/data/specs.json");
+const INPUT_DIR = path.resolve("./data/bikeshed-data/data/anchors/");
+const OUT_FILE = path.resolve("./data/xref/xref.json");
 
 const SUPPORTED_TYPES = new Set([
   "attribute",
