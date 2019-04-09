@@ -1,6 +1,6 @@
-workflow "Publish on Release" {
-  on = "release"
+workflow "Publish to npm on Release" {
   resolves = ["publish"]
+  on = "release"
 }
 
 action "publish" {
