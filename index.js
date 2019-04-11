@@ -1,5 +1,13 @@
-const path = require("path");
-const { readFileSync } = require("fs");
+// @ts-check
+/**
+ * @typedef {import('.').Cache} Cache
+ * @typedef {import('.').RequestEntry} RequestEntry
+ * @typedef {import('.').Database} Database
+ * @typedef {import('.').Response} Response
+ */
+const path = require('path');
+const { readFileSync } = require('fs');
+const crypto = require('crypto');
 
 const IDL_TYPES = new Set([
   "_IDL_",
@@ -15,79 +23,80 @@ const IDL_TYPES = new Set([
 
 const CONCEPT_TYPES = new Set(["_CONCEPT_", "dfn", "element", "event"]);
 
+const CACHE_DURATION = 24 * 60 * 60 * 1000;
+
 const specStatusAlias = new Map([
   ["draft", "current"],
   ["official", "snapshot"],
 ]);
 
 const defaultOptions = {
-  fields: ["spec", "type", "for", "normative", "uri", "shortname"],
+  fields: ["shortname", "spec", "type", "for", "normative", "uri"],
   spec_type: ["draft", "official"],
   types: [], // any
+  query: false,
 };
 
-/**
- * @typedef {{
-    [term: string]: {
-      "type": string;
-      "spec": string;
-      "shortname": string;
-      status: "snapshot" | "current";
-      uri: string;
-      normative: boolean;
-      for?: string[];
-    }[]
-  }} XrefData
- * @type {Map<"xref", XrefData>}
- */
+/** @type {Cache} */
 const cache = new Map();
+cache.set('cache', new Map()); // placeholder for hash based cache
+getData('xref', 'xref.json'); // load initial data and cache it
 
-// load initial data and cache it
-getData('xref', 'xref.json');
-
-/**
- * @typedef {{
-    term: string;
-    types?: string[];
-    specs?: string[];
-    for?: string;
-  }} XrefRequestEntry
- * @param {XrefRequestEntry[]} keys
- * @param {typeof<defaultOptions>} opts
- */
+/** @param {RequestEntry[]} keys */
 function xrefSearch(keys = [], opts = {}) {
-  /** @type {XrefData} */
+  /** @type {Database} */
   const data = getData('xref', 'xref.json');
   const options = { ...defaultOptions, ...opts };
-  const response = Object.create(null);
+
+  /** @type {Response} */
+  const response = { result: Object.create(null) };
+  if (options.query) response.query = [];
+
+  const termDataCache = cache.get('cache');
 
   for (const entry of keys) {
-    const { term: inputTerm, types } = entry;
-    const isIDL = Array.isArray(types) && types.some(t => IDL_TYPES.has(t));
-
-    const term = isIDL ? inputTerm : inputTerm.toLowerCase();
-
-    if (!(term in data)) {
-      continue;
+    const { hash = objectHash(entry) } = entry;
+    const termData = getTermData(entry, data, options);
+    if (!termDataCache.has(hash)) {
+      termDataCache.set(hash, { time: Date.now(), value: termData });
     }
-
-    const termData = data[term].filter(item => filter(item, entry, options));
     const prefereredData = filterBySpecType(termData, options.spec_type);
     const result = prefereredData.map(item => pickFields(item, options.fields));
-
-    if (!response[term]) response[term] = [];
-    response[term].push(...result);
-  }
-
-  for (const term in response) {
-    if (response[term].length) {
-      response[term] = getUnique(response[term]);
-    } else {
-      delete response[term];
+    response.result[hash] = result;
+    if (options.query) {
+      response.query.push(entry.hash ? entry : { ...entry, hash });
     }
   }
 
   return response;
+}
+
+/**
+ * @param {RequestEntry} entry
+ * @param {Database} data
+ * @param {typeof defaultOptions} options
+ */
+function getTermData(entry, data, options) {
+  const { hash, term: inputTerm, types } = entry;
+  const termDataCache = cache.get('cache');
+
+  if (termDataCache.has(hash)) {
+    const { time, value } = termDataCache.get(hash);
+    if (Date.now() - time < CACHE_DURATION) {
+      return value;
+    }
+    termDataCache.delete(hash);
+  }
+
+  const isIDL = Array.isArray(types) && types.some(t => IDL_TYPES.has(t));
+  const term = isIDL ? inputTerm : inputTerm.toLowerCase();
+
+  if (term in data) {
+    const termData = data[term].filter(item => filter(item, entry, options));
+    return termData;
+  }
+
+  return [];
 }
 
 function filter(item, entry, options) {
@@ -135,11 +144,6 @@ function pickFields(item, fields) {
   }, {});
 }
 
-function getUnique(termData) {
-  const unique = new Set(termData.map(JSON.stringify));
-  return [...unique].map(strData => JSON.parse(strData));
-}
-
 function getData(key, filename) {
   if (cache.has(key)) {
     return cache.get(key);
@@ -150,6 +154,14 @@ function getData(key, filename) {
   const data = JSON.parse(text);
   cache.set(key, data);
   return data;
+}
+
+function objectHash(obj) {
+  const str = JSON.stringify(obj, Object.keys(obj).sort());
+  return crypto
+    .createHash('sha1')
+    .update(str)
+    .digest('hex');
 }
 
 module.exports = {
