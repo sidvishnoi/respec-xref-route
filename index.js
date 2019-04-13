@@ -31,10 +31,10 @@ const specStatusAlias = new Map([
 ]);
 
 const defaultOptions = {
-  fields: ["shortname", "spec", "type", "for", "normative", "uri"],
+  fields: ["shortname", "type", "for", "normative", "uri"],
   spec_type: ["draft", "official"],
   types: [], // any
-  query: true,
+  query: false,
 };
 
 /** @type {Cache} */
