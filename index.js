@@ -1,13 +1,11 @@
 // @ts-check
 /**
- * @typedef {import('.').Cache} Cache
  * @typedef {import('.').RequestEntry} RequestEntry
  * @typedef {import('.').Database} Database
  * @typedef {import('.').Response} Response
  */
-const path = require("path");
-const { readFileSync } = require("fs");
 const crypto = require("crypto");
+const { cache } = require("./utils");
 
 const IDL_TYPES = new Set([
   "_IDL_",
@@ -23,7 +21,7 @@ const IDL_TYPES = new Set([
 
 const CONCEPT_TYPES = new Set(["_CONCEPT_", "dfn", "element", "event"]);
 
-const CACHE_DURATION = 24 * 60 * 60 * 1000;
+const CACHE_DURATION = 3 * 24 * 60 * 60 * 1000; // 3 days
 
 const specStatusAlias = new Map([
   ["draft", "current"],
@@ -37,28 +35,23 @@ const defaultOptions = {
   query: false,
 };
 
-/** @type {Cache} */
-const cache = new Map();
-cache.set("cache", new Map()); // placeholder for id based cache
-getData("xref", "xref.json"); // load initial data and cache it
-
 /** @param {RequestEntry[]} keys */
 function xrefSearch(keys = [], opts = {}) {
   /** @type {Database} */
-  const data = getData("xref", "xref.json");
+  const data = cache.get("xref");
   const options = { ...defaultOptions, ...opts };
 
   /** @type {Response} */
   const response = { result: Object.create(null) };
   if (options.query) response.query = [];
 
-  const termDataCache = cache.get("cache");
+  const requestCache = cache.get("request");
 
   for (const entry of keys) {
     const { id = objectHash(entry) } = entry;
-    const termData = getTermData(entry, data, options);
-    if (!termDataCache.has(id)) {
-      termDataCache.set(id, { time: Date.now(), value: termData });
+    const termData = getTermData(entry, requestCache, data, options);
+    if (!requestCache.has(id)) {
+      requestCache.set(id, { time: Date.now(), value: termData });
     }
     const prefereredData = filterBySpecType(termData, options.spec_type);
     const result = prefereredData.map(item => pickFields(item, options.fields));
@@ -73,19 +66,19 @@ function xrefSearch(keys = [], opts = {}) {
 
 /**
  * @param {RequestEntry} entry
+ * @param {import('.').RequestCache} requestCache
  * @param {Database} data
  * @param {typeof defaultOptions} options
  */
-function getTermData(entry, data, options) {
+function getTermData(entry, requestCache, data, options) {
   const { id, term: inputTerm, types } = entry;
-  const termDataCache = cache.get("cache");
 
-  if (termDataCache.has(id)) {
-    const { time, value } = termDataCache.get(id);
+  if (requestCache.has(id)) {
+    const { time, value } = requestCache.get(id);
     if (Date.now() - time < CACHE_DURATION) {
       return value;
     }
-    termDataCache.delete(id);
+    requestCache.delete(id);
   }
 
   const isIDL = Array.isArray(types) && types.some(t => IDL_TYPES.has(t));
@@ -206,18 +199,6 @@ function pickFields(item, fields) {
     result[field] = item[field];
     return result;
   }, {});
-}
-
-function getData(key, filename) {
-  if (cache.has(key)) {
-    return cache.get(key);
-  }
-
-  const dataFile = path.resolve(__dirname, `../../data/xref/${filename}`);
-  const text = readFileSync(dataFile, "utf8");
-  const data = JSON.parse(text);
-  cache.set(key, data);
-  return data;
 }
 
 function objectHash(obj) {

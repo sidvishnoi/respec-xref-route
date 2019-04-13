@@ -17,8 +17,14 @@ export interface HashCacheEntry {
   value: DataEntry[];
 }
 
-export type Cache = Map<'xref', Database> &
-  Map<'cache', Map<string, HashCacheEntry>>;
+export type RequestCache = Map<string, HashCacheEntry>;
+
+export declare class Cache extends Map {
+  get<K extends string>(
+    key: K,
+  ): K extends "request" ? RequestCache : K extends "xref" ? Database : any;
+  reset(): void;
+}
 
 export interface RequestEntry {
   term: string;
