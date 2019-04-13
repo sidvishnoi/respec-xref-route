@@ -22,7 +22,7 @@ export type Cache = Map<'xref', Database> &
 
 export interface RequestEntry {
   term: string;
-  hash: string;
+  id?: string;
   types?: string[];
   specs?: string[];
   for?: string;

@@ -5,9 +5,9 @@
  * @typedef {import('.').Database} Database
  * @typedef {import('.').Response} Response
  */
-const path = require('path');
-const { readFileSync } = require('fs');
-const crypto = require('crypto');
+const path = require("path");
+const { readFileSync } = require("fs");
+const crypto = require("crypto");
 
 const IDL_TYPES = new Set([
   "_IDL_",
@@ -34,37 +34,37 @@ const defaultOptions = {
   fields: ["shortname", "spec", "type", "for", "normative", "uri"],
   spec_type: ["draft", "official"],
   types: [], // any
-  query: false,
+  query: true,
 };
 
 /** @type {Cache} */
 const cache = new Map();
-cache.set('cache', new Map()); // placeholder for hash based cache
-getData('xref', 'xref.json'); // load initial data and cache it
+cache.set("cache", new Map()); // placeholder for id based cache
+getData("xref", "xref.json"); // load initial data and cache it
 
 /** @param {RequestEntry[]} keys */
 function xrefSearch(keys = [], opts = {}) {
   /** @type {Database} */
-  const data = getData('xref', 'xref.json');
+  const data = getData("xref", "xref.json");
   const options = { ...defaultOptions, ...opts };
 
   /** @type {Response} */
   const response = { result: Object.create(null) };
   if (options.query) response.query = [];
 
-  const termDataCache = cache.get('cache');
+  const termDataCache = cache.get("cache");
 
   for (const entry of keys) {
-    const { hash = objectHash(entry) } = entry;
+    const { id = objectHash(entry) } = entry;
     const termData = getTermData(entry, data, options);
-    if (!termDataCache.has(hash)) {
-      termDataCache.set(hash, { time: Date.now(), value: termData });
+    if (!termDataCache.has(id)) {
+      termDataCache.set(id, { time: Date.now(), value: termData });
     }
     const prefereredData = filterBySpecType(termData, options.spec_type);
     const result = prefereredData.map(item => pickFields(item, options.fields));
-    response.result[hash] = result;
+    response.result[id] = result;
     if (options.query) {
-      response.query.push(entry.hash ? entry : { ...entry, hash });
+      response.query.push(entry.id ? entry : { ...entry, id });
     }
   }
 
@@ -77,15 +77,15 @@ function xrefSearch(keys = [], opts = {}) {
  * @param {typeof defaultOptions} options
  */
 function getTermData(entry, data, options) {
-  const { hash, term: inputTerm, types } = entry;
-  const termDataCache = cache.get('cache');
+  const { id, term: inputTerm, types } = entry;
+  const termDataCache = cache.get("cache");
 
-  if (termDataCache.has(hash)) {
-    const { time, value } = termDataCache.get(hash);
+  if (termDataCache.has(id)) {
+    const { time, value } = termDataCache.get(id);
     if (Date.now() - time < CACHE_DURATION) {
       return value;
     }
-    termDataCache.delete(hash);
+    termDataCache.delete(id);
   }
 
   const isIDL = Array.isArray(types) && types.some(t => IDL_TYPES.has(t));
@@ -159,9 +159,9 @@ function getData(key, filename) {
 function objectHash(obj) {
   const str = JSON.stringify(obj, Object.keys(obj).sort());
   return crypto
-    .createHash('sha1')
+    .createHash("sha1")
     .update(str)
-    .digest('hex');
+    .digest("hex");
 }
 
 module.exports = {
