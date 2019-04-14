@@ -37,12 +37,11 @@ const defaultOptions = {
 
 /** @param {RequestEntry[]} keys */
 function xrefSearch(keys = [], opts = {}) {
-  /** @type {Database} */
   const data = cache.get("xref");
   const options = { ...defaultOptions, ...opts };
 
   /** @type {Response} */
-  const response = { result: Object.create(null) };
+  const response = { result: [] };
   if (options.query) response.query = [];
 
   const requestCache = cache.get("request");
@@ -55,7 +54,7 @@ function xrefSearch(keys = [], opts = {}) {
     }
     const prefereredData = filterBySpecType(termData, options.spec_type);
     const result = prefereredData.map(item => pickFields(item, options.fields));
-    response.result[id] = result;
+    response.result.push([id, result]);
     if (options.query) {
       response.query.push(entry.id ? entry : { ...entry, id });
     }

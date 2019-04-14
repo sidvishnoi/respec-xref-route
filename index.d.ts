@@ -2,7 +2,7 @@ export interface DataEntry {
   type: string;
   spec: string;
   shortname: string;
-  status: 'snapshot' | 'current';
+  status: "snapshot" | "current";
   uri: string;
   normative: boolean;
   for?: string[];
@@ -35,6 +35,6 @@ export interface RequestEntry {
 }
 
 export interface Response {
-  result: DataEntry[];
+  result: [string, DataEntry[]][];
   query?: RequestEntry[];
 }
