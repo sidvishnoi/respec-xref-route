@@ -6,11 +6,14 @@ class Cache extends Map {
     super();
     this.reset();
   }
+
   reset() {
-    // placeholder for id based cache
-    this.set("request", new Map());
+    // placeholder for query (key) id based cache
+    this.set("query", new Map());
+    // placeholder for "request.options.id" based cache
+    this.set("response", new Map());
     // load initial data and cache it
-    this.set("xref", this.readJson("xref.json"));
+    this.set("by_term", this.readJson("xref.json"));
   }
 
   readJson(filename) {

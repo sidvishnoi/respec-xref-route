@@ -1,7 +1,7 @@
 // @ts-check
 /**
  * @typedef {import('.').RequestEntry} RequestEntry
- * @typedef {import('.').Database} Database
+ * @typedef {import('.').CacheEntry} CacheEntry
  * @typedef {import('.').Response} Response
  */
 const crypto = require("crypto");
@@ -21,7 +21,8 @@ const IDL_TYPES = new Set([
 
 const CONCEPT_TYPES = new Set(["_CONCEPT_", "dfn", "element", "event"]);
 
-const CACHE_DURATION = 3 * 24 * 60 * 60 * 1000; // 3 days
+const QUERY_CACHE_DURATION = 3 * 24 * 60 * 60 * 1000; // 3 days
+const RESPONSE_CACHE_DURATION = 4 * 60 * 60 * 1000; // 4 hours
 
 const specStatusAlias = new Map([
   ["draft", "current"],
@@ -32,25 +33,32 @@ const defaultOptions = {
   fields: ["shortname", "type", "for", "normative", "uri"],
   spec_type: ["draft", "official"],
   types: [], // any
-  query: false,
 };
 
 /** @param {RequestEntry[]} keys */
 function xrefSearch(keys = [], opts = {}) {
-  const data = cache.get("xref");
+  const data = cache.get("by_term");
   const options = { ...defaultOptions, ...opts };
+
+  const responseCache = cache.get("response");
+  if (options.id && responseCache.has(options.id)) {
+    const { time, value: response } = responseCache.get(options.id);
+    if (Date.now() - time < RESPONSE_CACHE_DURATION) {
+      return response;
+    }
+  }
 
   /** @type {Response} */
   const response = { result: [] };
   if (options.query) response.query = [];
 
-  const requestCache = cache.get("request");
+  const queryCache = cache.get("query");
 
   for (const entry of keys) {
     const { id = objectHash(entry) } = entry;
-    const termData = getTermData(entry, requestCache, data, options);
-    if (!requestCache.has(id)) {
-      requestCache.set(id, { time: Date.now(), value: termData });
+    const termData = getTermData(entry, queryCache, data, options);
+    if (!queryCache.has(id)) {
+      queryCache.set(id, { time: Date.now(), value: termData });
     }
     const prefereredData = filterBySpecType(termData, options.spec_type);
     const result = prefereredData.map(item => pickFields(item, options.fields));
@@ -60,24 +68,27 @@ function xrefSearch(keys = [], opts = {}) {
     }
   }
 
+  if (options.id) {
+    responseCache.set(options.id, { time: Date.now(), value: response });
+  }
   return response;
 }
 
 /**
  * @param {RequestEntry} entry
- * @param {import('.').RequestCache} requestCache
- * @param {Database} data
+ * @param {CacheEntry["query"]} queryCache
+ * @param {CacheEntry["by_term"]} data
  * @param {typeof defaultOptions} options
  */
-function getTermData(entry, requestCache, data, options) {
+function getTermData(entry, queryCache, data, options) {
   const { id, term: inputTerm, types } = entry;
 
-  if (requestCache.has(id)) {
-    const { time, value } = requestCache.get(id);
-    if (Date.now() - time < CACHE_DURATION) {
+  if (queryCache.has(id)) {
+    const { time, value } = queryCache.get(id);
+    if (Date.now() - time < QUERY_CACHE_DURATION) {
       return value;
     }
-    requestCache.delete(id);
+    queryCache.delete(id);
   }
 
   const isIDL = Array.isArray(types) && types.some(t => IDL_TYPES.has(t));
