@@ -8,24 +8,6 @@ export interface DataEntry {
   for?: string[];
 }
 
-export interface Database {
-  [term: string]: DataEntry[];
-}
-
-export interface HashCacheEntry {
-  time: number;
-  value: DataEntry[];
-}
-
-export type RequestCache = Map<string, HashCacheEntry>;
-
-export declare class Cache extends Map {
-  get<K extends string>(
-    key: K,
-  ): K extends "request" ? RequestCache : K extends "xref" ? Database : any;
-  reset(): void;
-}
-
 export interface RequestEntry {
   term: string;
   id?: string;
@@ -37,4 +19,15 @@ export interface RequestEntry {
 export interface Response {
   result: [string, DataEntry[]][];
   query?: RequestEntry[];
+}
+
+export interface CacheEntry {
+  query: Map<string, { time: number; value: DataEntry[] }>;
+  by_term: { [term: string]: DataEntry[] };
+  response: Map<string, { time: number; value: Response }>;
+}
+
+export declare class Cache extends Map {
+  get<K extends keyof CacheEntry>(key: K): CacheEntry[K];
+  reset(): void;
 }
