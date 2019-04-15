@@ -10,19 +10,13 @@ class Cache extends Map {
     // placeholder for id based cache
     this.set("request", new Map());
     // load initial data and cache it
-    this.getData("xref", "xref.json");
+    this.set("xref", readJson("xref.json"));
   }
 
-  getData(key, filename) {
-    if (this.has(key)) {
-      return this.get(key);
-    }
-
+  readJson(filename) {
     const dataFile = path.resolve(__dirname, `../../data/xref/${filename}`);
     const text = readFileSync(dataFile, "utf8");
-    const data = JSON.parse(text);
-    this.set(key, data);
-    return data;
+    return JSON.parse(text);
   }
 }
 
