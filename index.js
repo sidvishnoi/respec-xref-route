@@ -176,8 +176,12 @@ function filter(item, entry, options) {
     }
   }
 
-  if (isAcceptable && forContext) {
-    isAcceptable = item.for && item.for.includes(forContext);
+  if (isAcceptable && typeof forContext === "string") {
+    if (forContext === "") {
+      isAcceptable = !item.for;
+    } else {
+      isAcceptable = item.for && item.for.includes(forContext);
+    }
   }
 
   return isAcceptable;
