@@ -16,6 +16,27 @@ export interface RequestEntry {
   for?: string;
 }
 
+type Field = "for" | "normative" | "shortname" | "spec"| "type" | "uri";
+type Type =
+  | "attribute"
+  | "dfn"
+  | "dict-member"
+  | "dictionary"
+  | "element"
+  | "enum-value"
+  | "enum"
+  | "event"
+  | "interface"
+  | "method"
+  | "typedef";
+export interface Options {
+  fields: Field[];
+  spec_type: ["draft", "official"];
+  types: Type[];
+  query?: boolean;
+  id?: string;
+}
+
 export interface Response {
   result: [string, DataEntry[]][];
   query?: RequestEntry[];
