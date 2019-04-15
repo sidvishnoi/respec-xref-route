@@ -6,7 +6,11 @@
  * @typedef {import('.').Options} Options
  */
 const crypto = require("crypto");
-const { cache } = require("./utils");
+const {
+  cache,
+  QUERY_CACHE_DURATION,
+  RESPONSE_CACHE_DURATION,
+} = require("./utils");
 
 const IDL_TYPES = new Set([
   "_IDL_",
@@ -21,9 +25,6 @@ const IDL_TYPES = new Set([
 ]);
 
 const CONCEPT_TYPES = new Set(["_CONCEPT_", "dfn", "element", "event"]);
-
-const QUERY_CACHE_DURATION = 3 * 24 * 60 * 60 * 1000; // 3 days
-const RESPONSE_CACHE_DURATION = 4 * 60 * 60 * 1000; // 4 hours
 
 const specStatusAlias = new Map([
   ["draft", "current"],
