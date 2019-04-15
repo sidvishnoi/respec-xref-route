@@ -51,4 +51,5 @@ export interface CacheEntry {
 export declare class Cache extends Map {
   get<K extends keyof CacheEntry>(key: K): CacheEntry[K];
   reset(): void;
+  autoCleanCaches(): void;
 }
