@@ -3,6 +3,7 @@
  * @typedef {import('.').RequestEntry} RequestEntry
  * @typedef {import('.').CacheEntry} CacheEntry
  * @typedef {import('.').Response} Response
+ * @typedef {import('.').Options} Options
  */
 const crypto = require("crypto");
 const { cache } = require("./utils");
@@ -29,6 +30,7 @@ const specStatusAlias = new Map([
   ["official", "snapshot"],
 ]);
 
+/** @type {Options} */
 const defaultOptions = {
   fields: ["shortname", "type", "for", "normative", "uri"],
   spec_type: ["draft", "official"],
