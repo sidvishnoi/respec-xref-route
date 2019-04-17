@@ -24,6 +24,7 @@ const SUPPORTED_TYPES = new Set([
   "enum-value",
   "enum",
   "event",
+  "exception",
   "interface",
   "method",
   "typedef",
