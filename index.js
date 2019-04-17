@@ -19,6 +19,7 @@ const IDL_TYPES = new Set([
   "dictionary",
   "enum-value",
   "enum",
+  "exception",
   "interface",
   "method",
   "typedef",
