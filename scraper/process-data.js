@@ -3,32 +3,15 @@
 // Reads and parses anchor data files from bikeshed-data repository
 // and writes data.json containing parsed and formatted data
 
-const { readFile, readdirSync, writeFile } = require("fs");
+const { readdir, readFile, writeFile } = require("fs").promises;
 const path = require("path");
-const { promisify } = require("util");
 const { CompactPrefixTree: Trie } = require("compact-prefix-tree");
-
-const readFileAsync = promisify(readFile);
-const writeFileAsync = promisify(writeFile);
+const { SUPPORTED_TYPES } = require("../utils");
 
 const SPECS_JSON = path.resolve("./data/bikeshed-data/data/specs.json");
 const INPUT_DIR = path.resolve("./data/bikeshed-data/data/anchors/");
-const OUT_FILE = path.resolve("./data/xref/xref.json");
-
-const SUPPORTED_TYPES = new Set([
-  "attribute",
-  "dfn",
-  "dict-member",
-  "dictionary",
-  "element",
-  "enum-value",
-  "enum",
-  "event",
-  "exception",
-  "interface",
-  "method",
-  "typedef",
-]);
+const OUTFILE_BY_TERM = path.resolve("./data/xref/xref.json");
+const OUTFILE_BY_SPEC = path.resolve("./data/xref/specs.json");
 
 async function main() {
   const urls = await getUrlList();
@@ -41,27 +24,30 @@ async function main() {
   const trie = new Trie(urls);
 
   console.log(`Reading files from ${INPUT_DIR}`);
-  const fileNames = readdirSync(INPUT_DIR);
+  const fileNames = await readdir(INPUT_DIR);
 
   console.log(`Reading ${fileNames.length} files...`);
   const contentPromises = fileNames.map(fileName => {
     const file = path.join(INPUT_DIR, fileName);
-    return readFileAsync(file, "utf8");
+    return readFile(file, "utf8");
   });
   const content = await Promise.all(contentPromises);
 
   console.log(`Processing ${fileNames.length} files...`);
   const errorURIs = [];
-  const data = fileNames.reduce((data, fileName, i) => {
+
+  const dataByTerm = Object.create(null);
+  const dataBySpec = Object.create(null);
+  for (const fileContent of content) {
     try {
-      const terms = parseData(content[i], errorURIs, trie);
-      addTermsToData(terms, data);
+      const terms = parseData(fileContent, errorURIs, trie);
+      updateDataByTerm(terms, dataByTerm);
+      updateDataBySpec(terms, dataBySpec);
     } catch (error) {
       console.error(`Error while processing ${fileName}`);
       throw error;
     }
-    return data;
-  }, Object.create(null));
+  }
 
   if (errorURIs.length) {
     // ideally never happens. keeping it to prevent database corruption.
@@ -72,8 +58,10 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(`Writing data file to ${OUT_FILE}`);
-  await writeFileAsync(OUT_FILE, JSON.stringify(data, null, 2), "utf8");
+  console.log(`Writing by-term data file to ${OUTFILE_BY_TERM}`);
+  await writeFile(OUTFILE_BY_TERM, JSON.stringify(dataByTerm, null, 2), "utf8");
+  console.log(`Writing by-spec data file to ${OUTFILE_BY_SPEC}`);
+  await writeFile(OUTFILE_BY_SPEC, JSON.stringify(dataBySpec, null, 2), "utf8");
 }
 
 main().catch(error => {
@@ -152,10 +140,17 @@ function parseData(content, errorURIs, trie) {
   return result;
 }
 
-function addTermsToData(terms, data) {
+function updateDataByTerm(terms, data) {
   for (const { key, isExported, ...termData } of terms) {
     if (!data[key]) data[key] = [];
     data[key].push(termData);
+  }
+}
+
+function updateDataBySpec(terms, data) {
+  for (const { shortname, isExported, ...termData } of terms) {
+    if (!data[shortname]) data[shortname] = [];
+    data[shortname].push(termData);
   }
 }
 
@@ -168,7 +163,7 @@ function normalizeKey(key, type) {
 
 async function getUrlList() {
   console.log(`Getting URL list from ${SPECS_JSON}`);
-  const urlFileContent = await readFileAsync(SPECS_JSON, "utf8");
+  const urlFileContent = await readFile(SPECS_JSON, "utf8");
   const specsData = JSON.parse(urlFileContent);
   const specUrls = Object.values(specsData).reduce((urls, spec) => {
     if (spec.current_url) urls.add(spec.current_url);

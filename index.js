@@ -7,25 +7,15 @@
  */
 const crypto = require("crypto");
 const {
-  cache,
+  Cache,
   QUERY_CACHE_DURATION,
   RESPONSE_CACHE_DURATION,
+  CONCEPT_TYPES,
+  IDL_TYPES,
 } = require("./utils");
 
-const IDL_TYPES = new Set([
-  "_IDL_",
-  "attribute",
-  "dict-member",
-  "dictionary",
-  "enum-value",
-  "enum",
-  "exception",
-  "interface",
-  "method",
-  "typedef",
-]);
-
-const CONCEPT_TYPES = new Set(["_CONCEPT_", "dfn", "element", "event"]);
+/** @type {import('.').Cache} */
+const cache = new Cache();
 
 const specStatusAlias = new Map([
   ["draft", "current"],
@@ -230,4 +220,8 @@ function objectHash(obj) {
 module.exports = {
   cache,
   xrefSearch,
+  types: {
+    idl: [...IDL_TYPES],
+    concept: [...CONCEPT_TYPES],
+  },
 };
