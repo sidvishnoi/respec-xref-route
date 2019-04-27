@@ -3,8 +3,7 @@
 // Reads and parses anchor data files from bikeshed-data repository
 // and writes data.json containing parsed and formatted data
 
-const { readdirSync } = require("fs");
-const { readFile, writeFile } = require("fs").promises;
+const { readdir, readFile, writeFile } = require("fs").promises;
 const path = require("path");
 const { CompactPrefixTree: Trie } = require("compact-prefix-tree");
 const { SUPPORTED_TYPES } = require("../utils");
@@ -25,7 +24,7 @@ async function main() {
   const trie = new Trie(urls);
 
   console.log(`Reading files from ${INPUT_DIR}`);
-  const fileNames = readdirSync(INPUT_DIR);
+  const fileNames = await readdir(INPUT_DIR);
 
   console.log(`Reading ${fileNames.length} files...`);
   const contentPromises = fileNames.map(fileName => {
