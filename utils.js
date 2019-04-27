@@ -19,6 +19,7 @@ class Cache extends Map {
     this.set("response", new Map());
     // load initial data and cache it
     this.set("by_term", this.readJson("xref.json"));
+    this.set("by_spec", this.readJson("specs.json"));
   }
 
   readJson(filename) {
@@ -43,11 +44,28 @@ class Cache extends Map {
   }
 }
 
-/** @type {import('.').Cache} */
-const cache = new Cache();
+const IDL_TYPES = new Set([
+  "_IDL_",
+  "attribute",
+  "dict-member",
+  "dictionary",
+  "enum-value",
+  "enum",
+  "exception",
+  "interface",
+  "method",
+  "typedef",
+]);
+
+const CONCEPT_TYPES = new Set(["_CONCEPT_", "dfn", "element", "event"]);
+
+const SUPPORTED_TYPES = new Set([...IDL_TYPES, ...CONCEPT_TYPES]);
 
 module.exports = {
-  cache,
+  Cache,
   QUERY_CACHE_DURATION,
   RESPONSE_CACHE_DURATION,
+  IDL_TYPES,
+  CONCEPT_TYPES,
+  SUPPORTED_TYPES,
 };
