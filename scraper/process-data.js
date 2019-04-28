@@ -12,17 +12,9 @@ const SPECS_JSON = path.resolve("./data/bikeshed-data/data/specs.json");
 const INPUT_DIR = path.resolve("./data/bikeshed-data/data/anchors/");
 const OUTFILE_BY_TERM = path.resolve("./data/xref/xref.json");
 const OUTFILE_BY_SPEC = path.resolve("./data/xref/specs.json");
+const OUTFILE_SPECMAP = path.resolve("./data/xref/specmap.json");
 
 async function main() {
-  const urls = await getUrlList();
-  // We'll use a Trie for an efficient prefix search,
-  // to convert long uri to short uri
-  // eg: https://html.spec.whatwg.org/multipage/workers.html#abstractworker
-  // gets converted to:
-  // workers.html#abstractworker
-  // as https://html.spec.whatwg.org/multipage/ belongs to `urls`
-  const trie = new Trie(urls);
-
   console.log(`Reading files from ${INPUT_DIR}`);
   const fileNames = await readdir(INPUT_DIR);
 
@@ -33,11 +25,20 @@ async function main() {
   });
   const content = await Promise.all(contentPromises);
 
-  console.log(`Processing ${fileNames.length} files...`);
-  const errorURIs = [];
+  const { specMap, urls } = await getSpecsMetadata();
+
+  // We'll use a Trie for an efficient prefix search,
+  // to convert long uri to short uri
+  // eg: https://html.spec.whatwg.org/multipage/workers.html#abstractworker
+  // gets converted to:
+  // workers.html#abstractworker
+  // as https://html.spec.whatwg.org/multipage/ belongs to `urls`
+  const trie = new Trie(urls);
 
   const dataByTerm = Object.create(null);
   const dataBySpec = Object.create(null);
+  const errorURIs = [];
+  console.log(`Processing ${fileNames.length} files...`);
   for (const fileContent of content) {
     try {
       const terms = parseData(fileContent, errorURIs, trie);
@@ -62,6 +63,8 @@ async function main() {
   await writeFile(OUTFILE_BY_TERM, JSON.stringify(dataByTerm, null, 2), "utf8");
   console.log(`Writing by-spec data file to ${OUTFILE_BY_SPEC}`);
   await writeFile(OUTFILE_BY_SPEC, JSON.stringify(dataBySpec, null, 2), "utf8");
+  console.log(`Writing spec mapping data to ${OUTFILE_SPECMAP}`);
+  await writeFile(OUTFILE_SPECMAP, JSON.stringify(specMap, null, 2), "utf8");
 }
 
 main().catch(error => {
@@ -161,14 +164,25 @@ function normalizeKey(key, type) {
   return key;
 }
 
-async function getUrlList() {
-  console.log(`Getting URL list from ${SPECS_JSON}`);
+async function getSpecsMetadata() {
+  console.log(`Getting spec metadata from ${SPECS_JSON}`);
   const urlFileContent = await readFile(SPECS_JSON, "utf8");
-  const specsData = JSON.parse(urlFileContent);
-  const specUrls = Object.values(specsData).reduce((urls, spec) => {
-    if (spec.current_url) urls.add(spec.current_url);
-    if (spec.snapshot_url) urls.add(spec.snapshot_url);
-    return urls;
-  }, new Set());
-  return [...specUrls].sort();
+  const data = JSON.parse(urlFileContent);
+
+  const specMap = Object.create(null);
+  const specUrls = new Set();
+
+  for (const [spec, entry] of Object.entries(data)) {
+    if (entry.current_url) specUrls.add(entry.current_url);
+    if (entry.snapshot_url) specUrls.add(entry.snapshot_url);
+
+    specMap[spec] = {
+      url: entry.current_url || entry.snapshot_url,
+      title: entry.title,
+      shortname: entry.shortname,
+    };
+  }
+
+  const urls = [...specUrls].sort();
+  return { urls, specMap };
 }

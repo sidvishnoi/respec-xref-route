@@ -20,6 +20,7 @@ class Cache extends Map {
     // load initial data and cache it
     this.set("by_term", this.readJson("xref.json"));
     this.set("by_spec", this.readJson("specs.json"));
+    this.set("specmap", this.readJson("specmap.json"));
   }
 
   readJson(filename) {
