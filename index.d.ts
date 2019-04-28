@@ -45,6 +45,9 @@ export interface Response {
 export interface CacheEntry {
   query: Map<string, { time: number; value: DataEntry[] }>;
   by_term: { [term: string]: DataEntry[] };
+  specmap: {
+    [spec: string]: { url: string; shortname: string; title: string };
+  };
   response: Map<string, { time: number; value: Response }>;
 }
 
