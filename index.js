@@ -1,6 +1,7 @@
 // @ts-check
 /**
  * @typedef {import('.').RequestEntry} RequestEntry
+ * @typedef {import('.').DataEntry} DataEntry
  * @typedef {import('.').CacheEntry} CacheEntry
  * @typedef {import('.').Response} Response
  * @typedef {import('.').Options} Options
@@ -49,6 +50,11 @@ function xrefSearch(keys = [], opts = {}) {
   const queryCache = cache.get("query");
 
   for (const entry of keys) {
+    if (Array.isArray(entry.specs) && !Array.isArray(entry.specs[0])) {
+      // @ts-ignore
+      entry.specs = [entry.specs];
+    }
+
     const { id = objectHash(entry) } = entry;
     const termData = getTermData(entry, queryCache, data, options);
     if (!queryCache.has(id)) {
@@ -160,12 +166,20 @@ function* textVariations(term) {
   if (last1 === "y") yield `${term.slice(0, -1)}ied`;
 }
 
+/**
+ * @param {DataEntry} item
+ * @param {RequestEntry} entry
+ * @param {Options} options
+ */
 function filter(item, entry, options) {
-  const { specs, for: forContext, types } = entry;
+  const { specs: specsLists, for: forContext, types } = entry;
   let isAcceptable = true;
 
-  if (Array.isArray(specs) && specs.length) {
-    isAcceptable = specs.includes(item.shortname);
+  if (Array.isArray(specsLists) && specsLists.length) {
+    for (const specs of specsLists) {
+      isAcceptable = specs.includes(item.shortname);
+      if (isAcceptable) break;
+    }
   }
 
   const derivedTypes =

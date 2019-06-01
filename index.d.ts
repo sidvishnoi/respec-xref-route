@@ -12,7 +12,7 @@ export interface RequestEntry {
   term: string;
   id?: string;
   types?: string[];
-  specs?: string[];
+  specs?: string[][];
   for?: string;
 }
 
