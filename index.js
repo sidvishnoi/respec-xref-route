@@ -75,7 +75,7 @@ function xrefSearch(keys = [], opts = {}) {
  * @param {typeof defaultOptions} options
  */
 function getTermData(entry, queryCache, data, options) {
-  const { id, term: inputTerm, types } = entry;
+  const { id, term: inputTerm, types = [] } = entry;
 
   if (queryCache.has(id)) {
     const { time, value } = queryCache.get(id);
@@ -85,11 +85,13 @@ function getTermData(entry, queryCache, data, options) {
     queryCache.delete(id);
   }
 
-  const isIDL = Array.isArray(types) && types.some(t => IDL_TYPES.has(t));
-  const term = isIDL ? inputTerm : inputTerm.toLowerCase();
+  const isConcept = types.some(t => CONCEPT_TYPES.has(t));
+  const isIDL = types.some(t => IDL_TYPES.has(t));
+  const shouldTreatAsConcept = isConcept && (!isIDL && !!types.length);
+  const term = shouldTreatAsConcept ? inputTerm.toLowerCase() : inputTerm;
 
   let termData = data[term] || [];
-  if (!termData.length && !isIDL) {
+  if (!termData.length && shouldTreatAsConcept) {
     for (const altTerm of textVariations(term)) {
       if (altTerm in data) {
         termData = data[altTerm];
