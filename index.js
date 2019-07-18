@@ -208,14 +208,26 @@ function filter(item, entry, options) {
   return isAcceptable;
 }
 
+/**
+ * @param {DataEntry[]} data
+ * @param {DataEntry['status'][]} specTypes
+ */
 function filterBySpecType(data, specTypes) {
   if (!specTypes.length) return data;
 
-  const prefereredType = specStatusAlias.get(specTypes[0]) || specTypes[0];
-  const filteredData = data.filter(item => item.status === prefereredType);
+  const preferredType = specStatusAlias.get(specTypes[0]) || specTypes[0];
+  const preferredData = [];
+  for (const item of data) {
+    if (
+      item.status === preferredType ||
+      !preferredData.find(it => item.spec === it.spec && item.type === it.type)
+    ) {
+      preferredData.push(item);
+    }
+  }
 
-  const hasPrefereredData = specTypes.length === 2 && filteredData.length;
-  return specTypes.length === 1 || hasPrefereredData ? filteredData : data;
+  const hasPreferredData = specTypes.length === 2 && preferredData.length;
+  return specTypes.length === 1 || hasPreferredData ? preferredData : data;
 }
 
 function pickFields(item, fields) {
