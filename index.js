@@ -197,8 +197,8 @@ function filter(item, entry, options) {
     }
   }
 
-  if (isAcceptable && typeof forContext === "string") {
-    if (forContext === "") {
+  if (isAcceptable) {
+    if (!forContext) {
       isAcceptable = !item.for;
     } else {
       isAcceptable = item.for && item.for.includes(forContext);
