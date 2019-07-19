@@ -35,6 +35,7 @@ export interface Options {
   types: Type[];
   query?: boolean;
   id?: string;
+  all?: boolean;
 }
 
 export interface Response {
