@@ -197,7 +197,8 @@ function filter(item, entry, options) {
     }
   }
 
-  if (isAcceptable) {
+  // if `options.all` is true and `forContext` isn't provided, we skip the this filter
+  if (isAcceptable && (options.all ? typeof forContext === "string" : true)) {
     if (!forContext) {
       isAcceptable = !item.for;
     } else {
