@@ -94,7 +94,8 @@ function getTermData(entry, queryCache, data, options) {
   const isConcept = types.some(t => CONCEPT_TYPES.has(t));
   const isIDL = types.some(t => IDL_TYPES.has(t));
   const shouldTreatAsConcept = isConcept && (!isIDL && !!types.length);
-  const term = shouldTreatAsConcept ? inputTerm.toLowerCase() : inputTerm;
+  let term = shouldTreatAsConcept ? inputTerm.toLowerCase() : inputTerm;
+  if (inputTerm === '""') term = "";
 
   let termData = data[term] || [];
   if (!termData.length && shouldTreatAsConcept) {
