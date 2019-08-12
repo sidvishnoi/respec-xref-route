@@ -68,7 +68,7 @@ export interface Data {
   };
 }
 
-export const cache = new (class Cache extends Map {
+class Cache extends Map {
   private _version: number;
   constructor() {
     super();
@@ -107,7 +107,9 @@ export const cache = new (class Cache extends Map {
       }
     }
   }
-})();
+}
+
+export const cache = new Cache();
 
 const specStatusAlias = new Map([
   ['draft', 'current'],
