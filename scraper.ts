@@ -30,17 +30,20 @@ interface DataBySpec {
   [shortname: string]: Omit<ParsedDataEntry, 'shortname' | 'isExported'>[];
 }
 
+const log = (...args: any[]) => console.log('(xref/scraper)', ...args);
+const logError = (...args: any[]) => console.error('(xref/scraper)', ...args);
+
 export async function main() {
   const hasUpdated = await updateInputSource();
   if (!hasUpdated) {
-    console.log('Nothing to update');
+    log('Nothing to update');
     return false;
   }
 
-  console.log(`Reading files from ${INPUT_ANCHORS_DIR}`);
+  log(`Reading files from ${INPUT_ANCHORS_DIR}`);
   const files = await readdir(INPUT_ANCHORS_DIR);
 
-  console.log(`Reading ${files.length} files...`);
+  log(`Reading ${files.length} files...`);
   const content = await Promise.all(
     files.map(file => readFile(joinPath(INPUT_ANCHORS_DIR, file), 'utf8'))
   );
@@ -58,7 +61,7 @@ export async function main() {
   const dataByTerm: DataByTerm = Object.create(null);
   const dataBySpec: DataBySpec = Object.create(null);
   const errorURIs: string[] = [];
-  console.log(`Processing ${files.length} files...`);
+  log(`Processing ${files.length} files...`);
   for (let i = 0; i < files.length; i++) {
     const fileContent = content[i];
     try {
@@ -66,7 +69,7 @@ export async function main() {
       updateDataByTerm(terms, dataByTerm);
       updateDataBySpec(terms, dataBySpec);
     } catch (error) {
-      console.error(`Error while processing ${files[i]}`);
+      logError(`Error while processing ${files[i]}`);
       throw error;
     }
   }
@@ -74,11 +77,11 @@ export async function main() {
   if (errorURIs.length) {
     // ideally never happens. keeping it to prevent database corruption.
     const msg = `[fixURI]: Failed to resolve base url. (x${errorURIs.length})`;
-    console.error(msg, '\n', errorURIs.join('\n'));
+    logError(msg, '\n', errorURIs.join('\n'));
     process.exit(1);
   }
 
-  console.log('Writing processed data files...');
+  log('Writing processed data files...');
   await Promise.all([
     writeFile(OUTFILE_BY_TERM, JSON.stringify(dataByTerm, null, 2)),
     writeFile(OUTFILE_BY_SPEC, JSON.stringify(dataBySpec, null, 2)),
@@ -166,8 +169,8 @@ function parseData(content: string, errorURIs: string[], trie: Trie) {
           for: dataFor.length > 0 ? dataFor : undefined
         };
       } catch (error) {
-        console.error('Error while processing section:');
-        console.error(lines);
+        logError('Error while processing section:');
+        logError(lines);
         throw error;
       }
     });
@@ -207,7 +210,7 @@ function uniq<T>(items: T[]) {
 }
 
 async function getSpecsMetadata() {
-  console.log(`Getting spec metadata from ${SPECS_JSON}`);
+  log(`Getting spec metadata from ${SPECS_JSON}`);
 
   interface SpecsJSON {
     [specid: string]: {
