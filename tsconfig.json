@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "removeComments": false,
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "strict": true,
+    "newLine": "LF"
+  }
+}
