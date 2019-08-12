@@ -1,7 +1,8 @@
 {
   "name": "respec-xref-route",
-  "version": "5.4.5",
+  "version": "6.0.0",
   "description": "Keyword based search API for CSSWG's Shepherd data, used in ReSpec.",
+  "type": "module",
   "keywords": [
     "csswg",
     "respec",
@@ -11,25 +12,22 @@
     "w3c"
   ],
   "homepage": "https://github.com/sidvishnoi/respec-xref-route#readme",
-  "bugs": {
-    "url": "https://github.com/sidvishnoi/respec-xref-route/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/sidvishnoi/respec-xref-route.git"
-  },
+  "bugs": "https://github.com/sidvishnoi/respec-xref-route/issues",
+  "repository": "git@github.com:sidvishnoi/respec-xref-route.git",
   "license": "MIT",
   "author": "Sid Vishnoi <sidvishnoi8@gmail.com>",
   "main": "index.js",
-  "bin": {
-    "fetch-bs-data": "./scraper/get-data.sh",
-    "convert-bs-data": "./scraper/process-data.js"
-  },
   "scripts": {
-    "fetch": "./scraper/get-data.sh",
-    "convert": "./scraper/process-data.js"
+    "build": "tsc -d",
+    "clean": "rm -rf *.js *.d.ts",
+    "dev": "tsc -w",
+    "prepare": "npm run clean && npm run build"
   },
   "dependencies": {
-    "compact-prefix-tree": "^1.0.0"
+    "compact-prefix-tree": "^2.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^12.7.1",
+    "typescript": "^3.5.3"
   }
 }
