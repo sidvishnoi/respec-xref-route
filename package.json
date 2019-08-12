@@ -18,10 +18,8 @@
   "author": "Sid Vishnoi <sidvishnoi8@gmail.com>",
   "main": "index.js",
   "scripts": {
-    "build": "npm run build:cjs && npm run build:esm",
-    "build:cjs": "tsc --module commonjs --outdir cjs",
-    "build:esm": "tsc -d",
-    "clean": "rm -rf *.js *.d.ts cjs/",
+    "build": "tsc -d",
+    "clean": "rm -rf *.js *.d.ts",
     "dev": "tsc -w",
     "prepare": "npm run clean && npm run build"
   },
