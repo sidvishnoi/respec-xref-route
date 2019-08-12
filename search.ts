@@ -69,10 +69,11 @@ export interface Data {
 }
 
 export const cache = new (class Cache extends Map {
-  public isReady: boolean;
+  private _version: number;
   constructor() {
     super();
-    this.isReady = false;
+    this._version = 0;
+    this.refresh();
   }
 
   get<T extends keyof Data>(key: T) {
@@ -85,6 +86,11 @@ export const cache = new (class Cache extends Map {
     this.set('by_term', Cache.readJson<Data['by_term']>('xref.json'));
     this.set('by_spec', Cache.readJson<Data['by_spec']>('specs.json'));
     this.set('specmap', Cache.readJson<Data['specmap']>('specmap.json'));
+    this._version++;
+  }
+
+  get version() {
+    return this._version;
   }
 
   static readJson<T>(filename: string) {

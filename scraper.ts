@@ -84,6 +84,7 @@ export async function main() {
     writeFile(OUTFILE_BY_SPEC, JSON.stringify(dataBySpec, null, 2)),
     writeFile(OUTFILE_SPECMAP, JSON.stringify(specMap, null, 2))
   ]);
+  return true;
 }
 
 function updateInputSource() {
