@@ -36,7 +36,7 @@ type SpecType = DataEntry['status'] | 'draft' | 'official';
 export interface Options {
   fields: (keyof DataEntry)[];
   spec_type: SpecType[];
-  types: (Type | '_IDL_' | '_CONCEPT_)[];
+  types: (Type | '_IDL_' | '_CONCEPT_')[];
   query?: boolean;
   id?: string;
   all?: boolean;
