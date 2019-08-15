@@ -29,5 +29,10 @@
   "devDependencies": {
     "@types/node": "^12.7.1",
     "typescript": "^3.5.3"
+  },
+  "prettier": {
+    "arrowParens": "avoid",
+    "singleQuote": true,
+    "trailingComma": "all"
   }
 }
