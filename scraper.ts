@@ -7,8 +7,8 @@ import { promises as fs, existsSync } from 'fs';
 import { resolve as resolvePath, join as joinPath } from 'path';
 import { spawn } from 'child_process';
 import Trie from 'compact-prefix-tree/cjs';
-import { SUPPORTED_TYPES, DATA_DIR } from './constants.js';
-import { Data } from './cache.js';
+import { SUPPORTED_TYPES, DATA_DIR } from './constants';
+import { Data } from './cache';
 
 const { readdir, readFile, writeFile } = fs;
 
@@ -45,7 +45,7 @@ export async function main() {
 
   log(`Reading ${files.length} files...`);
   const content = await Promise.all(
-    files.map(file => readFile(joinPath(INPUT_ANCHORS_DIR, file), 'utf8'))
+    files.map(file => readFile(joinPath(INPUT_ANCHORS_DIR, file), 'utf8')),
   );
 
   const { specMap, urls } = await getSpecsMetadata();
@@ -85,7 +85,7 @@ export async function main() {
   await Promise.all([
     writeFile(OUTFILE_BY_TERM, JSON.stringify(dataByTerm, null, 2)),
     writeFile(OUTFILE_BY_SPEC, JSON.stringify(dataBySpec, null, 2)),
-    writeFile(OUTFILE_SPECMAP, JSON.stringify(specMap, null, 2))
+    writeFile(OUTFILE_SPECMAP, JSON.stringify(specMap, null, 2)),
   ]);
   return true;
 }
@@ -166,7 +166,7 @@ function parseData(content: string, errorURIs: string[], trie: Trie) {
           status,
           uri: normalizedURI,
           normative: normative === '1',
-          for: dataFor.length > 0 ? dataFor : undefined
+          for: dataFor.length > 0 ? dataFor : undefined,
         };
       } catch (error) {
         logError('Error while processing section:');
@@ -176,7 +176,7 @@ function parseData(content: string, errorURIs: string[], trie: Trie) {
     });
 
   const filtered = termData.filter(
-    term => term.isExported && SUPPORTED_TYPES.has(term.type)
+    term => term.isExported && SUPPORTED_TYPES.has(term.type),
   );
 
   return uniq(filtered);
@@ -235,7 +235,7 @@ async function getSpecsMetadata() {
     specMap[spec] = {
       url: entry.current_url || entry.snapshot_url,
       title: entry.title,
-      shortname: entry.shortname
+      shortname: entry.shortname,
     };
   }
 

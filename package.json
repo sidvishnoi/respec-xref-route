@@ -21,14 +21,23 @@
     "build": "tsc -d",
     "clean": "rm -rf *.js *.d.ts",
     "dev": "tsc -w",
-    "prepublishOnly": "npm run clean && npm run build"
+    "prepublishOnly": "npm run clean && npm run build",
+    "pretest": "tsc --sourceMap",
+    "test": "jest"
   },
   "dependencies": {
     "compact-prefix-tree": "^2.0.1"
   },
   "devDependencies": {
     "@types/node": "^12.7.1",
+    "jest": "^24.8.0",
     "typescript": "^3.5.3"
+  },
+  "jest": {
+    "testRegex": "/__tests__/.*\\.test\\.(j|t)s$",
+    "collectCoverageFrom": [
+      "search.js"
+    ]
   },
   "prettier": {
     "arrowParens": "avoid",

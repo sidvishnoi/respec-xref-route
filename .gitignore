@@ -5,4 +5,7 @@ data/
 .vscode
 *.js
 *.d.ts
+coverage
+*.map
 !@types/**/*.d.ts
+!__tests__/**/*.js

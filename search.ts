@@ -1,6 +1,6 @@
 import { createHash } from 'crypto';
-import { QUERY_CACHE_DURATION, IDL_TYPES, CONCEPT_TYPES } from './constants.js';
-import { cache, Data } from './cache.js';
+import { QUERY_CACHE_DURATION, IDL_TYPES, CONCEPT_TYPES } from './constants';
+import { cache, Data } from './cache';
 
 type Type =
   | 'attribute'
@@ -55,7 +55,7 @@ const specStatusAlias = new Map([
 ]);
 
 const defaultOptions: Options = {
-  fields: ['shortname', 'type', 'for', 'normative', 'uri'],
+  fields: ['shortname', 'spec', 'type', 'for', 'normative', 'uri'],
   spec_type: ['draft', 'official'],
   types: [],
 };
@@ -131,8 +131,9 @@ function filter(item: DataEntry, query: Query, options: Options) {
   let isAcceptable = true;
 
   if (Array.isArray(specsLists) && specsLists.length) {
+    const { spec, shortname } = item;
     for (const specs of specsLists) {
-      isAcceptable = specs.includes(item.shortname);
+      isAcceptable = specs.includes(spec) || specs.includes(shortname);
       if (isAcceptable) break;
     }
   }
@@ -246,7 +247,7 @@ function* textVariations(term: string) {
   if (last1 === 'y') yield `${term.slice(0, -1)}ied`;
 }
 
-export function pickFields<T>(item: T, fields: (keyof T)[]) {
+function pickFields<T>(item: T, fields: (keyof T)[]) {
   const result: Partial<T> = {};
   for (const field of fields) {
     result[field] = item[field];
@@ -254,7 +255,7 @@ export function pickFields<T>(item: T, fields: (keyof T)[]) {
   return result;
 }
 
-export function objectHash(obj: object): string {
+function objectHash(obj: object): string {
   const str = JSON.stringify(obj, Object.keys(obj).sort());
   return createHash('sha1')
     .update(str)

@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { resolve as resolvePath } from 'path';
-import { DATA_DIR, QUERY_CACHE_DURATION } from './constants.js';
-import { DataEntry } from './search.js';
+import { DATA_DIR, QUERY_CACHE_DURATION } from './constants';
+import { DataEntry } from './search';
 
 export interface Data {
   query: Map<string, { time: number; value: DataEntry[] }>;
