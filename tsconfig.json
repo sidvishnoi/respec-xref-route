@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "esnext",
+    "module": "commonjs",
     "moduleResolution": "node",
     "removeComments": false,
     "typeRoots": [
-      "./node_modules/@types"
+      "./node_modules/@types",
+      "./@types"
     ],
     "strict": true,
     "newLine": "LF"
