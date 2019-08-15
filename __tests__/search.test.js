@@ -65,7 +65,6 @@ describe('options', () => {
           uri: '#inherited-value',
           type: 'dfn',
           for: undefined,
-          normative: true,
           shortname: 'css-cascade',
         },
       ]);

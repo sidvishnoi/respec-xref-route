@@ -6,7 +6,6 @@ module.exports = {
       shortname: 'webidl',
       status: 'current',
       uri: '#aborterror',
-      normative: true,
     },
   ],
   'event handler': [
@@ -16,7 +15,6 @@ module.exports = {
       shortname: 'html',
       status: 'snapshot',
       uri: 'webappapis.html#event-handlers',
-      normative: true,
     },
   ],
   'host parsing': [
@@ -26,7 +24,6 @@ module.exports = {
       shortname: 'url',
       status: 'snapshot',
       uri: '#concept-host-parser',
-      normative: true,
     },
   ],
   '': [
@@ -36,7 +33,6 @@ module.exports = {
       shortname: 'referrer-policy',
       status: 'current',
       uri: '#dom-referrerpolicy',
-      normative: true,
       for: ['ReferrerPolicy'],
     },
     {
@@ -45,7 +41,6 @@ module.exports = {
       shortname: 'fetch',
       status: 'current',
       uri: '#dom-requestdestination',
-      normative: true,
       for: ['RequestDestination'],
     },
     {
@@ -54,7 +49,6 @@ module.exports = {
       shortname: 'xhr',
       status: 'current',
       uri: '#dom-xmlhttprequestresponsetype',
-      normative: true,
       for: ['XMLHttpRequestResponseType'],
     },
   ],
@@ -65,7 +59,6 @@ module.exports = {
       shortname: 'font-metrics-api',
       status: 'current',
       uri: '#baseline',
-      normative: true,
     },
   ],
   baseline: [
@@ -75,7 +68,6 @@ module.exports = {
       shortname: 'svg',
       status: 'snapshot',
       uri: 'text.html#TermBaseline',
-      normative: true,
     },
     {
       type: 'dfn',
@@ -83,7 +75,6 @@ module.exports = {
       shortname: 'svg',
       status: 'current',
       uri: 'text.html#TermBaseline',
-      normative: true,
     },
   ],
   script: [
@@ -93,7 +84,6 @@ module.exports = {
       shortname: 'fetch',
       status: 'current',
       uri: '#dom-requestdestination-script',
-      normative: true,
       for: ['RequestDestination'],
     },
     {
@@ -102,7 +92,6 @@ module.exports = {
       shortname: 'html',
       status: 'snapshot',
       uri: 'scripting.html#script',
-      normative: true,
     },
     {
       type: 'dfn',
@@ -110,7 +99,6 @@ module.exports = {
       shortname: 'html',
       status: 'snapshot',
       uri: 'webappapis.html#concept-script',
-      normative: true,
     },
     {
       type: 'element',
@@ -118,7 +106,6 @@ module.exports = {
       shortname: 'svg',
       status: 'snapshot',
       uri: 'script.html#ScriptElement',
-      normative: true,
     },
     {
       type: 'element',
@@ -126,7 +113,6 @@ module.exports = {
       shortname: 'svg',
       status: 'snapshot',
       uri: 'interact.html#elementdef-script',
-      normative: true,
     },
     {
       type: 'element',
@@ -134,7 +120,6 @@ module.exports = {
       shortname: 'svg',
       status: 'current',
       uri: 'interact.html#elementdef-script',
-      normative: true,
     },
   ],
   'inherited value': [
@@ -144,7 +129,6 @@ module.exports = {
       shortname: 'css-cascade',
       status: 'snapshot',
       uri: '#inherited-value',
-      normative: true,
     },
     {
       type: 'dfn',
@@ -152,7 +136,6 @@ module.exports = {
       shortname: 'css-cascade',
       status: 'current',
       uri: '#inherited-value',
-      normative: true,
     },
     {
       type: 'dfn',
@@ -160,7 +143,6 @@ module.exports = {
       shortname: 'css-cascade',
       status: 'snapshot',
       uri: '#inherited-value',
-      normative: true,
     },
     {
       type: 'dfn',
@@ -168,7 +150,6 @@ module.exports = {
       shortname: 'css-cascade',
       status: 'current',
       uri: '#inherited-value',
-      normative: true,
     },
   ],
 };
