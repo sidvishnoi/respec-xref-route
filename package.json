@@ -21,6 +21,7 @@
     "build": "tsc -d",
     "clean": "rm -rf *.js *.d.ts",
     "dev": "tsc -w",
+    "prepare": "npm run build",
     "prepublishOnly": "npm run clean && npm run build",
     "pretest": "tsc --sourceMap",
     "test": "jest"
