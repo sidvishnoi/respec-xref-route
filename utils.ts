@@ -4,6 +4,7 @@ import { createHash } from 'crypto';
  * Generate intelligent variations of the term
  * Source: https://github.com/tabatkins/bikeshed/blob/682218b6/bikeshed/refs/utils.py#L52 💖
  */
+/* istanbul ignore next */
 export function* textVariations(term: string) {
   const len = term.length;
   const last1 = len >= 1 ? term.slice(-1) : null;

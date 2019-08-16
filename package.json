@@ -36,7 +36,8 @@
   "jest": {
     "testRegex": "/__tests__/.*\\.test\\.(j|t)s$",
     "collectCoverageFrom": [
-      "search.js"
+      "search.js",
+      "utils.js"
     ]
   },
   "prettier": {
