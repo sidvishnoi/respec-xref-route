@@ -46,22 +46,20 @@ describe('options', () => {
 
   describe('fields', () => {
     const search = (q, opts) => _search([q], { ...opts }).result[0][1];
-    const query = { term: 'inherited value', specs: [['css-cascade-3']] };
 
     it('returns only requested fields', () => {
-      expect(search(query, { fields: ['spec', 'uri'] })).toEqual([
-        { spec: 'css-cascade-3', uri: '#inherited-value' },
-      ]);
+      expect(search({ term: 'Baseline' }, { fields: ['spec', 'uri'] })).toEqual(
+        [{ spec: 'font-metrics-api-1', uri: '#baseline' }],
+      );
     });
 
     it('returns default fields if not specified', () => {
-      expect(search(query)).toEqual([
+      expect(search({ term: 'Baseline' })).toEqual([
         {
-          spec: 'css-cascade-3',
-          uri: '#inherited-value',
-          type: 'dfn',
-          for: undefined,
-          shortname: 'css-cascade',
+          shortname: 'font-metrics-api',
+          spec: 'font-metrics-api-1',
+          type: 'interface',
+          uri: '#baseline',
         },
       ]);
     });
@@ -109,14 +107,10 @@ describe('filter@term', () => {
   });
 
   test('textVariations', () => {
-    let result = [{ uri: 'webappapis.html#event-handlers' }];
+    const result = [{ uri: 'webappapis.html#event-handlers' }];
     expect(search({ term: 'event handler' })).toEqual(result);
     expect(search({ term: 'event handlers' })).toEqual([]);
     expect(search({ term: 'event handlers', types: ['dfn'] })).toEqual(result);
-
-    result = [{ uri: '#concept-host-parser' }];
-    expect(search({ term: 'host parsing', types: ['dfn'] })).toEqual(result);
-    expect(search({ term: 'host parse', types: ['dfn'] })).toEqual(result);
   });
 
   it('preserves case based on query.types', () => {
@@ -200,8 +194,8 @@ describe('filter@types', () => {
       asElementOrDFN,
     );
 
-    expect(search({ term: 'Element', types: ['interface'] })).toEqual([
-      { uri: '#element' },
+    expect(search({ term: 'Baseline', types: ['interface'] })).toEqual([
+      { uri: '#baseline' },
     ]);
   });
 
@@ -209,8 +203,8 @@ describe('filter@types', () => {
     const asConcept = [resultMarker[1], resultMarker[0], resultMarker[2]];
     expect(search({ term: 'marker', types: ['_CONCEPT_'] })).toEqual(asConcept);
 
-    expect(search({ term: 'Element', types: ['_IDL_'] })).toEqual([
-      { uri: '#element' },
+    expect(search({ term: 'Baseline', types: ['_IDL_'] })).toEqual([
+      { uri: '#baseline' },
     ]);
   });
 });

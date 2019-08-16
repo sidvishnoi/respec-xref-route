@@ -1,13 +1,4 @@
 module.exports = {
-  AbortError: [
-    {
-      type: 'exception',
-      spec: 'webidl',
-      shortname: 'webidl',
-      status: 'current',
-      uri: '#aborterror',
-    },
-  ],
   'event handler': [
     {
       type: 'dfn',
@@ -15,15 +6,6 @@ module.exports = {
       shortname: 'html',
       status: 'snapshot',
       uri: 'webappapis.html#event-handlers',
-    },
-  ],
-  'host parsing': [
-    {
-      type: 'dfn',
-      spec: 'url',
-      shortname: 'url',
-      status: 'snapshot',
-      uri: '#concept-host-parser',
     },
   ],
   '': [
@@ -180,15 +162,6 @@ module.exports = {
       shortname: 'svg',
       status: 'current',
       uri: 'painting.html#elementdef-marker',
-    },
-  ],
-  Element: [
-    {
-      type: 'interface',
-      spec: 'dom',
-      shortname: 'dom',
-      status: 'snapshot',
-      uri: '#element',
     },
   ],
   EventInit: [
