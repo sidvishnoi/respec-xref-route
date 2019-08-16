@@ -7,10 +7,10 @@ const data = require('./data');
  */
 const search = (query, options) => {
   const { result } = _search([query], {
-    fields: ['spec', 'uri', 'type', 'for'],
+    fields: ['uri'],
     ...options,
   });
-  return JSON.parse(JSON.stringify(result[0][1]));
+  return result[0][1];
 };
 
 jest.mock('../cache', () => ({
@@ -73,19 +73,9 @@ describe('options', () => {
 
   describe('all', () => {
     const resultsAll = [
-      { type: 'dfn', spec: 'dom', uri: '#concept-event' },
-      {
-        type: 'attribute',
-        spec: 'dom',
-        uri: '#dom-window-event',
-        for: ['Window'],
-      },
-      {
-        type: 'attribute',
-        spec: 'html',
-        uri: 'obsolete.html#dom-script-event',
-        for: ['HTMLScriptElement'],
-      },
+      { uri: '#concept-event' },
+      { uri: '#dom-window-event' },
+      { uri: 'obsolete.html#dom-script-event' },
     ];
 
     it('skips filter@for if options.all is set and for is not provided', () => {
@@ -116,39 +106,26 @@ describe('backward compatibility', () => {
 
 describe('filter@term', () => {
   test('empty string', () => {
-    const result = [
-      {
-        type: 'enum-value',
-        spec: 'referrer-policy-1',
-        uri: '#dom-referrerpolicy',
-        for: ['ReferrerPolicy'],
-      },
-    ];
+    const result = [{ uri: '#dom-referrerpolicy' }];
     expect(search({ term: '', for: 'ReferrerPolicy' })).toEqual(result);
     expect(search({ term: '""', for: 'ReferrerPolicy' })).toEqual(result);
     expect(search({ term: "''", for: 'ReferrerPolicy' })).toEqual([]);
   });
 
   test('textVariations', () => {
-    let result = [
-      { type: 'dfn', spec: 'html', uri: 'webappapis.html#event-handlers' },
-    ];
+    let result = [{ uri: 'webappapis.html#event-handlers' }];
     expect(search({ term: 'event handler' })).toEqual(result);
     expect(search({ term: 'event handlers' })).toEqual([]);
     expect(search({ term: 'event handlers', types: ['dfn'] })).toEqual(result);
 
-    result = [{ type: 'dfn', spec: 'url', uri: '#concept-host-parser' }];
+    result = [{ uri: '#concept-host-parser' }];
     expect(search({ term: 'host parsing', types: ['dfn'] })).toEqual(result);
     expect(search({ term: 'host parse', types: ['dfn'] })).toEqual(result);
   });
 
   it('preserves case based on query.types', () => {
-    const baseline = [
-      { type: 'dfn', spec: 'svg2', uri: 'text.html#TermBaseline' },
-    ];
-    const baselineInterface = [
-      { type: 'interface', spec: 'font-metrics-api-1', uri: '#baseline' },
-    ];
+    const baseline = [{ uri: 'text.html#TermBaseline' }];
+    const baselineInterface = [{ uri: '#baseline' }];
 
     expect(search({ term: 'baseline' })).toEqual(baseline);
     expect(search({ term: 'baseLine' })).toEqual([]);
@@ -169,50 +146,45 @@ describe('filter@specs', () => {
       a.uri.localeCompare(b.uri),
     );
     const expectedResults = [
-      { spec: 'svg2', type: 'element', uri: 'interact.html#elementdef-script' },
-      { spec: 'svg', type: 'element', uri: 'script.html#ScriptElement' },
-      { spec: 'html', type: 'element', uri: 'scripting.html#script' },
-      { spec: 'html', type: 'dfn', uri: 'webappapis.html#concept-script' },
+      { uri: 'interact.html#elementdef-script' },
+      { uri: 'script.html#ScriptElement' },
+      { uri: 'scripting.html#script' },
+      { uri: 'webappapis.html#concept-script' },
     ].sort((a, b) => a.uri.localeCompare(b.uri));
 
     expect(results).toEqual(expectedResults);
   });
 
   it('filters on spec id first, then on shortname', () => {
-    expect(
-      search({ term: 'inherited value', specs: [['css-cascade-3']] }),
-    ).toEqual([
-      { spec: 'css-cascade-3', type: 'dfn', uri: '#inherited-value' },
+    const term = 'inherited value';
+    const options = { fields: ['spec', 'uri'] };
+    expect(search({ term, specs: [['css-cascade-3']] }, options)).toEqual([
+      { spec: 'css-cascade-3', uri: '#inherited-value' },
     ]);
 
-    expect(
-      search({ term: 'inherited value', specs: [['css-cascade-4']] }),
-    ).toEqual([
-      { spec: 'css-cascade-4', type: 'dfn', uri: '#inherited-value' },
+    expect(search({ term, specs: [['css-cascade-4']] }, options)).toEqual([
+      { spec: 'css-cascade-4', uri: '#inherited-value' },
     ]);
 
-    expect(
-      search({ term: 'inherited value', specs: [['css-cascade']] }),
-    ).toEqual([
-      { spec: 'css-cascade-4', type: 'dfn', uri: '#inherited-value' },
-      { spec: 'css-cascade-3', type: 'dfn', uri: '#inherited-value' },
+    expect(search({ term, specs: [['css-cascade']] }, options)).toEqual([
+      { spec: 'css-cascade-4', uri: '#inherited-value' },
+      { spec: 'css-cascade-3', uri: '#inherited-value' },
     ]);
   });
 
   it('supports fallback chains', () => {
     expect(search({ term: 'script', specs: [['dom'], ['svg2']] })).toEqual([
-      { spec: 'svg2', type: 'element', uri: 'interact.html#elementdef-script' },
+      { uri: 'interact.html#elementdef-script' },
     ]);
   });
 });
 
 describe('filter@types', () => {
   const resultMarker = [
-    { spec: 'css-lists-3', type: 'dfn', uri: '#marker' },
-    { spec: 'svg2', type: 'element', uri: 'painting.html#elementdef-marker' },
-    { spec: 'svg', type: 'element', uri: 'painting.html#MarkerElement' },
+    { uri: '#marker' },
+    { uri: 'painting.html#elementdef-marker' },
+    { uri: 'painting.html#MarkerElement' },
   ];
-  const resultElement = [{ type: 'interface', spec: 'dom', uri: '#element' }];
 
   it('skips filter if types are not provided', () => {
     const withoutTypes = [resultMarker[1], resultMarker[0], resultMarker[2]];
@@ -232,18 +204,18 @@ describe('filter@types', () => {
       asElementOrDFN,
     );
 
-    expect(search({ term: 'Element', types: ['interface'] })).toEqual(
-      resultElement,
-    );
+    expect(search({ term: 'Element', types: ['interface'] })).toEqual([
+      { uri: '#element' },
+    ]);
   });
 
   it('uses _CONCEPT_, _IDL_ aggregate types', () => {
     const asConcept = [resultMarker[1], resultMarker[0], resultMarker[2]];
     expect(search({ term: 'marker', types: ['_CONCEPT_'] })).toEqual(asConcept);
 
-    expect(search({ term: 'Element', types: ['_IDL_'] })).toEqual(
-      resultElement,
-    );
+    expect(search({ term: 'Element', types: ['_IDL_'] })).toEqual([
+      { uri: '#element' },
+    ]);
   });
 });
 
@@ -251,37 +223,22 @@ describe('filter@for', () => {
   it('skips filter if for is not provided', () => {
     expect(search({ term: '[[context]]' })).toHaveLength(0);
 
-    const result = [{ type: 'dfn', spec: 'dom', uri: '#concept-event' }];
+    const result = [{ uri: '#concept-event' }];
     expect(search({ term: 'event' })).toEqual(result);
     expect(search({ term: 'event', for: '' })).toEqual(result);
   });
 
   it('uses for context', () => {
     expect(search({ term: '[[context]]', for: 'BluetoothDevice' })).toEqual([
-      {
-        type: 'attribute',
-        spec: 'web-bluetooth-1',
-        uri: '#dom-bluetoothdevice-context-slot',
-        for: ['BluetoothDevice'],
-      },
+      { uri: '#dom-bluetoothdevice-context-slot' },
     ]);
     expect(search({ term: '[[context]]', for: 'WhateverElse' })).toEqual([]);
 
     expect(search({ term: 'event', for: 'Window' })).toEqual([
-      {
-        type: 'attribute',
-        spec: 'dom',
-        uri: '#dom-window-event',
-        for: ['Window'],
-      },
+      { uri: '#dom-window-event' },
     ]);
     expect(search({ term: 'event', for: 'HTMLScriptElement' })).toEqual([
-      {
-        type: 'attribute',
-        spec: 'html',
-        uri: 'obsolete.html#dom-script-event',
-        for: ['HTMLScriptElement'],
-      },
+      { uri: 'obsolete.html#dom-script-event' },
     ]);
   });
 });
