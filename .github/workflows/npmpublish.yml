@@ -1,0 +1,19 @@
+name: npm publish
+on: release
+jobs:
+  publish-npm:
+    name: Build and Publish to npm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel if not a release publish # workaround has `on` doesn't have this filter
+        run: exit 78
+        if: github.event.action != 'published'
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
+      - run: npm i
+      - run: npm publish # builds via prepublishOnly
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
