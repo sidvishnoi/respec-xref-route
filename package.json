@@ -1,8 +1,7 @@
 {
   "name": "respec-xref-route",
-  "version": "6.0.1",
+  "version": "6.0.2",
   "description": "Keyword based search API for CSSWG's Shepherd data, used in ReSpec.",
-  "type": "module",
   "keywords": [
     "csswg",
     "respec",
@@ -16,7 +15,7 @@
   "repository": "git@github.com:sidvishnoi/respec-xref-route.git",
   "license": "MIT",
   "author": "Sid Vishnoi <sidvishnoi8@gmail.com>",
-  "main": "index.js",
+  "main": "search.js",
   "scripts": {
     "build": "tsc -d",
     "clean": "rm -rf *.js *.d.ts",
