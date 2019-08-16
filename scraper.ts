@@ -9,6 +9,7 @@ import { spawn } from 'child_process';
 import Trie from 'compact-prefix-tree/cjs';
 import { SUPPORTED_TYPES, DATA_DIR } from './constants';
 import { Data } from './cache';
+import { uniq } from './utils';
 
 const { readdir, readFile, writeFile } = fs;
 
@@ -201,12 +202,6 @@ function normalizeKey(key: string, type: string) {
     return key.replace(/^"|"$/g, '');
   }
   return key;
-}
-
-function uniq<T>(items: T[]) {
-  const unique = new Set(items.map(entry => JSON.stringify(entry)));
-  const result = [...unique].map(str => JSON.parse(str) as typeof items[0]);
-  return result;
 }
 
 async function getSpecsMetadata() {
