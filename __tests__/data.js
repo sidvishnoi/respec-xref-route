@@ -152,4 +152,87 @@ module.exports = {
       uri: '#inherited-value',
     },
   ],
+  marker: [
+    {
+      type: 'dfn',
+      spec: 'css-lists-3',
+      shortname: 'css-lists',
+      status: 'current',
+      uri: '#marker',
+    },
+    {
+      type: 'element',
+      spec: 'svg',
+      shortname: 'svg',
+      status: 'snapshot',
+      uri: 'painting.html#MarkerElement',
+    },
+    {
+      type: 'element',
+      spec: 'svg2',
+      shortname: 'svg',
+      status: 'snapshot',
+      uri: 'painting.html#elementdef-marker',
+    },
+    {
+      type: 'element',
+      spec: 'svg2',
+      shortname: 'svg',
+      status: 'current',
+      uri: 'painting.html#elementdef-marker',
+    },
+  ],
+  Element: [
+    {
+      type: 'interface',
+      spec: 'dom',
+      shortname: 'dom',
+      status: 'snapshot',
+      uri: '#element',
+    },
+  ],
+  EventInit: [
+    {
+      type: 'dictionary',
+      spec: 'dom',
+      shortname: 'dom',
+      status: 'snapshot',
+      uri: '#dictdef-eventinit',
+    },
+  ],
+  '[[context]]': [
+    {
+      type: 'attribute',
+      spec: 'web-bluetooth-1',
+      shortname: 'web-bluetooth',
+      status: 'snapshot',
+      uri: '#dom-bluetoothdevice-context-slot',
+      for: ['BluetoothDevice'],
+    },
+  ],
+  event: [
+    {
+      type: 'dfn',
+      spec: 'dom',
+      shortname: 'dom',
+      status: 'snapshot',
+      uri: '#concept-event',
+    },
+    {
+      type: 'attribute',
+      spec: 'dom',
+      shortname: 'dom',
+      status: 'snapshot',
+      uri: '#dom-window-event',
+      for: ['Window'],
+    },
+    {
+      type: 'attribute',
+      spec: 'html',
+      shortname: 'html',
+      status: 'snapshot',
+      uri: 'obsolete.html#dom-script-event',
+      for: ['HTMLScriptElement'],
+    },
+  ],
 };

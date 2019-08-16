@@ -70,6 +70,40 @@ describe('options', () => {
       ]);
     });
   });
+
+  describe('all', () => {
+    const resultsAll = [
+      { type: 'dfn', spec: 'dom', uri: '#concept-event' },
+      {
+        type: 'attribute',
+        spec: 'dom',
+        uri: '#dom-window-event',
+        for: ['Window'],
+      },
+      {
+        type: 'attribute',
+        spec: 'html',
+        uri: 'obsolete.html#dom-script-event',
+        for: ['HTMLScriptElement'],
+      },
+    ];
+
+    it('skips filter@for if options.all is set and for is not provided', () => {
+      expect(search({ term: 'event' }, { all: true })).toEqual(resultsAll);
+    });
+
+    it('uses filter@for if options.all is set and for is provided', () => {
+      expect(search({ term: 'event', for: 'Window' }, { all: true })).toEqual([
+        resultsAll[1],
+      ]);
+    });
+
+    it('uses filter@for if options.all is not set', () => {
+      expect(search({ term: 'event', for: 'Window' }, { all: true })).toEqual([
+        resultsAll[1],
+      ]);
+    });
+  });
 });
 
 describe('backward compatibility', () => {
@@ -172,5 +206,82 @@ describe('filter@specs', () => {
   });
 });
 
-// TODO remaining
-describe('filter@types', () => {});
+describe('filter@types', () => {
+  const resultMarker = [
+    { spec: 'css-lists-3', type: 'dfn', uri: '#marker' },
+    { spec: 'svg2', type: 'element', uri: 'painting.html#elementdef-marker' },
+    { spec: 'svg', type: 'element', uri: 'painting.html#MarkerElement' },
+  ];
+  const resultElement = [{ type: 'interface', spec: 'dom', uri: '#element' }];
+
+  it('skips filter if types are not provided', () => {
+    const withoutTypes = [resultMarker[1], resultMarker[0], resultMarker[2]];
+    expect(search({ term: 'marker' })).toEqual(withoutTypes);
+    expect(search({ term: 'marker', types: [] })).toEqual(withoutTypes);
+  });
+
+  it('uses basic types filter', () => {
+    const asDFN = [resultMarker[0]];
+    expect(search({ term: 'marker', types: ['dfn'] })).toEqual(asDFN);
+
+    const asElement = [resultMarker[1], resultMarker[2]];
+    expect(search({ term: 'marker', types: ['element'] })).toEqual(asElement);
+
+    const asElementOrDFN = [resultMarker[1], resultMarker[0], resultMarker[2]];
+    expect(search({ term: 'marker', types: ['element', 'dfn'] })).toEqual(
+      asElementOrDFN,
+    );
+
+    expect(search({ term: 'Element', types: ['interface'] })).toEqual(
+      resultElement,
+    );
+  });
+
+  it('uses _CONCEPT_, _IDL_ aggregate types', () => {
+    const asConcept = [resultMarker[1], resultMarker[0], resultMarker[2]];
+    expect(search({ term: 'marker', types: ['_CONCEPT_'] })).toEqual(asConcept);
+
+    expect(search({ term: 'Element', types: ['_IDL_'] })).toEqual(
+      resultElement,
+    );
+  });
+});
+
+describe('filter@for', () => {
+  it('skips filter if for is not provided', () => {
+    expect(search({ term: '[[context]]' })).toHaveLength(0);
+
+    const result = [{ type: 'dfn', spec: 'dom', uri: '#concept-event' }];
+    expect(search({ term: 'event' })).toEqual(result);
+    expect(search({ term: 'event', for: '' })).toEqual(result);
+  });
+
+  it('uses for context', () => {
+    expect(search({ term: '[[context]]', for: 'BluetoothDevice' })).toEqual([
+      {
+        type: 'attribute',
+        spec: 'web-bluetooth-1',
+        uri: '#dom-bluetoothdevice-context-slot',
+        for: ['BluetoothDevice'],
+      },
+    ]);
+    expect(search({ term: '[[context]]', for: 'WhateverElse' })).toEqual([]);
+
+    expect(search({ term: 'event', for: 'Window' })).toEqual([
+      {
+        type: 'attribute',
+        spec: 'dom',
+        uri: '#dom-window-event',
+        for: ['Window'],
+      },
+    ]);
+    expect(search({ term: 'event', for: 'HTMLScriptElement' })).toEqual([
+      {
+        type: 'attribute',
+        spec: 'html',
+        uri: 'obsolete.html#dom-script-event',
+        for: ['HTMLScriptElement'],
+      },
+    ]);
+  });
+});
