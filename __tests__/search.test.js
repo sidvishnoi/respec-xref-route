@@ -1,16 +1,12 @@
 const { search: _search } = require('../search');
-const data = require('./data');
 
 /**
  * @param {import('../search').Query} query
  * @param {import('../search').Options} options
  */
 const search = (query, options) => {
-  const { result } = _search([query], {
-    fields: ['uri'],
-    ...options,
-  });
-  return result[0][1];
+  const response = _search([query], { fields: ['uri'], ...options });
+  return response.result[0][1];
 };
 
 jest.mock('../cache', () => ({
