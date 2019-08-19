@@ -75,13 +75,15 @@ export function search(queries: Query[] = [], opts: Partial<Options> = {}) {
       query.specs = [query.specs]; // for backward compatibility
     }
 
-    const { id = objectHash(query) } = query;
+    if (!query.id) {
+      query.id = objectHash(query);
+    }
     const termData = getTermData(query, queryCache, data, options);
     const prefereredData = filterBySpecType(termData, options.spec_type);
     const result = prefereredData.map(item => pickFields(item, options.fields));
-    response.result.push([id, result]);
+    response.result.push([query.id, result]);
     if (options.query) {
-      response.query!.push(query.id ? query : { ...query, id });
+      response.query!.push(query);
     }
   }
 
