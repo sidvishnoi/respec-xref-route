@@ -122,7 +122,7 @@ function getTermData(
 
   const result = termData.filter(item => filter(item, query, options));
 
-  cache.set(id, { time: Date.now(), value: termData });
+  cache.set(id, { time: Date.now(), value: result });
   return result;
 }
 
