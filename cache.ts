@@ -20,7 +20,7 @@ class Cache extends Map {
   private _version: number;
   constructor() {
     super();
-    this._version = 0;
+    this._version = Date.now();
     this.refresh();
   }
 
@@ -34,7 +34,7 @@ class Cache extends Map {
     this.set('by_term', Cache.readJson<Data['by_term']>('xref.json'));
     this.set('by_spec', Cache.readJson<Data['by_spec']>('specs.json'));
     this.set('specmap', Cache.readJson<Data['specmap']>('specmap.json'));
-    this._version++;
+    this._version = Date.now();
   }
 
   get version() {
