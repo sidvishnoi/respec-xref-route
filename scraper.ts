@@ -201,6 +201,9 @@ function normalizeKey(key: string, type: string) {
   if (type === 'enum-value') {
     return key.replace(/^"|"$/g, '');
   }
+  if (type === 'method' && !key.endsWith(')')) {
+    return key + '()';
+  }
   return key;
 }
 
