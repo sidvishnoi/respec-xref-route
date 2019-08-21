@@ -208,4 +208,14 @@ module.exports = {
       for: ['HTMLScriptElement'],
     },
   ],
+  handleEvent: [
+    {
+      type: 'method',
+      spec: 'dom',
+      shortname: 'dom',
+      status: 'snapshot',
+      uri: '#dom-eventlistener-handleevent',
+      for: ['EventListener'],
+    },
+  ],
 };

@@ -1,4 +1,5 @@
 import { createHash } from 'crypto';
+import { Query } from './search';
 
 /**
  * Generate intelligent variations of the term
@@ -62,6 +63,17 @@ export function* textVariations(term: string) {
   // stringified <-> stringify
   if (last3 === 'ied') yield `${term.slice(0, -3)}y`;
   if (last1 === 'y') yield `${term.slice(0, -1)}ied`;
+}
+
+export function* idlTextVariations(query: Query) {
+  const { term, types } = query;
+  if (types && types.includes('method')) {
+    if (!term.endsWith(')')) {
+      yield term + '()';
+    } else if (term.endsWith('()')) {
+      yield term.slice(0, -2);
+    }
+  }
 }
 
 export function pickFields<T>(item: T, fields: (keyof T)[]) {

@@ -1,6 +1,7 @@
 import { QUERY_CACHE_DURATION, IDL_TYPES, CONCEPT_TYPES } from './constants';
 import { cache, Data } from './cache';
-import { objectHash, pickFields, textVariations } from './utils';
+import { idlTextVariations, textVariations } from './utils';
+import { objectHash, pickFields } from './utils';
 
 type Type =
   | 'attribute'
@@ -113,8 +114,11 @@ function getTermData(
   if (inputTerm === '""') term = '';
 
   let termData = data[term] || [];
-  if (!termData.length && shouldTreatAsConcept) {
-    for (const altTerm of textVariations(term)) {
+  if (!termData.length) {
+    const variations = shouldTreatAsConcept
+      ? textVariations(term)
+      : idlTextVariations(query);
+    for (const altTerm of variations) {
       if (altTerm in data) {
         termData = data[altTerm];
         break;

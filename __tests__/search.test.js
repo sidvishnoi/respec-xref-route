@@ -113,6 +113,15 @@ describe('filter@term', () => {
     expect(search({ term: 'event handlers', types: ['dfn'] })).toEqual(result);
   });
 
+  describe('idlTextVariations', () => {
+    it('transforms methods without arguments', () => {
+      const result = [{ uri: '#dom-eventlistener-handleevent' }];
+      const query = { types: ['method'], for: 'EventListener' };
+      expect(search({ ...query, term: 'handleEvent' })).toEqual(result);
+      expect(search({ ...query, term: 'handleEvent()' })).toEqual(result);
+    });
+  });
+
   it('preserves case based on query.types', () => {
     const baseline = [{ uri: 'text.html#TermBaseline' }];
     const baselineInterface = [{ uri: '#baseline' }];
