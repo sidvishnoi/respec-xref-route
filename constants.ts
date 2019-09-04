@@ -8,6 +8,7 @@ export const DATA_DIR = resolve(process.env.DATA_DIR);
 export const IDL_TYPES = new Set([
   '_IDL_',
   'attribute',
+  'callback',
   'dict-member',
   'dictionary',
   'enum-value',
