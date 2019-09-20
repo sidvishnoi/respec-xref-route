@@ -187,6 +187,13 @@ function updateDataByTerm(terms: ParsedDataEntry[], data: DataByTerm) {
   for (const { key, isExported, ...termData } of terms) {
     if (!data[key]) data[key] = [];
     data[key].push(termData);
+
+    if (termData.type === 'method' && /\(.+\)/.test(key)) {
+      // add another entry without the arguments
+      const methodWithoutArgs = key.replace(/\(.+\)/, '()');
+      if (!data[methodWithoutArgs]) data[methodWithoutArgs] = [];
+      data[methodWithoutArgs].push(termData);
+    }
   }
 }
 
