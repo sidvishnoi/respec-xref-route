@@ -79,7 +79,8 @@ export function search(queries: Query[] = [], opts: Partial<Options> = {}) {
       query.id = objectHash(query);
     }
     const termData = getTermData(query, queryCache, data, options);
-    const prefereredData = filterBySpecType(termData, options.spec_type);
+    let prefereredData = filterBySpecType(termData, options.spec_type);
+    prefereredData = filterPreferLatestVersion(prefereredData);
     const result = prefereredData.map(item => pickFields(item, options.fields));
     response.result.push([query.id, result]);
     if (options.query) {
@@ -184,4 +185,34 @@ function filterBySpecType(data: DataEntry[], specTypes: SpecType[]) {
 
   const hasPreferredData = specTypes.length === 2 && preferredData.length;
   return specTypes.length === 1 || hasPreferredData ? preferredData : data;
+}
+
+function filterPreferLatestVersion(data: DataEntry[]) {
+  if (data.length <= 1) {
+    return data;
+  }
+
+  const differingByVersion: Record<string, DataEntry[]> = {};
+  for (const entry of data) {
+    const key = `${entry.shortname}/${entry.uri}`;
+    if (!differingByVersion[key]) {
+      differingByVersion[key] = [];
+    }
+    differingByVersion[key].push(entry);
+  }
+
+  const result: DataEntry[] = [];
+  for (const entries of Object.values(differingByVersion)) {
+    if (entries.length > 1) {
+      // sorted as largest version number (latest) first
+      entries.sort((a, b) => getVersion(b.spec) - getVersion(a.spec));
+    }
+    result.push(entries[0]);
+  }
+  return result;
+}
+
+function getVersion(s: string) {
+  const match = s.match(/(\d+)?$/);
+  return match ? Number(match[1]) : 0;
 }
