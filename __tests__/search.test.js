@@ -155,10 +155,13 @@ describe('filter@specs', () => {
     expect(search({ term, specs: [['css-cascade-4']] }, options)).toEqual([
       { spec: 'css-cascade-4', uri: '#inherited-value' },
     ]);
+  });
 
+  it('prefers latest version of same spec', () => {
+    const term = 'inherited value';
+    const options = { fields: ['spec', 'uri'] };
     expect(search({ term, specs: [['css-cascade']] }, options)).toEqual([
       { spec: 'css-cascade-4', uri: '#inherited-value' },
-      { spec: 'css-cascade-3', uri: '#inherited-value' },
     ]);
   });
 
