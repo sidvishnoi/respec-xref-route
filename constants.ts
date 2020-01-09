@@ -20,8 +20,13 @@ export const IDL_TYPES = new Set([
   'typedef',
 ]);
 
-export const CONCEPT_TYPES = new Set(['_CONCEPT_', 'dfn', 'element', 'event']);
+export const CONCEPT_TYPES = new Set(['_CONCEPT_', 'dfn', 'event']);
+export const MARKUP_TYPES = new Set(['element', 'element-attr']);
 
-export const SUPPORTED_TYPES = new Set([...IDL_TYPES, ...CONCEPT_TYPES]);
+export const SUPPORTED_TYPES = new Set([
+  ...IDL_TYPES,
+  ...CONCEPT_TYPES,
+  ...MARKUP_TYPES,
+]);
 
 export const QUERY_CACHE_DURATION = 3 * 24 * 60 * 60 * 1000; // 3 days

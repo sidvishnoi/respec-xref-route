@@ -109,7 +109,7 @@ function getTermData(
 
   const isConcept = types.some(t => CONCEPT_TYPES.has(t));
   const isIDL = types.some(t => IDL_TYPES.has(t));
-  const shouldTreatAsConcept = isConcept && (!isIDL && !!types.length);
+  const shouldTreatAsConcept = isConcept && !isIDL && !!types.length;
   let term = shouldTreatAsConcept ? inputTerm.toLowerCase() : inputTerm;
   if (inputTerm === '""') term = '';
 
