@@ -203,8 +203,9 @@ describe('filter@types', () => {
   });
 
   it('uses _CONCEPT_, _IDL_ aggregate types', () => {
-    const asConcept = [resultMarker[1], resultMarker[0], resultMarker[2]];
-    expect(search({ term: 'marker', types: ['_CONCEPT_'] })).toEqual(asConcept);
+    expect(search({ term: 'marker', types: ['_CONCEPT_'] })).toEqual([
+      resultMarker[0],
+    ]);
 
     expect(search({ term: 'Baseline', types: ['_IDL_'] })).toEqual([
       { uri: '#baseline' },
