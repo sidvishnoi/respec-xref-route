@@ -34,7 +34,7 @@ describe('utils', () => {
     expect(utils.pickFields(object, ['bar']).bar).toBe(object.bar);
   });
 
-  test('uniq', () => {
+  test.skip('uniq', () => {
     expect(
       utils.uniq([
         { foo: 'FOO', bar: 'BAR' },

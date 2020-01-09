@@ -79,8 +79,11 @@ export function objectHash(obj: object): string {
     .digest('hex');
 }
 
-export function uniq<T>(items: T[]) {
-  const unique = new Set(items.map(entry => JSON.stringify(entry)));
-  const result = [...unique].map(str => JSON.parse(str) as typeof items[0]);
+export function uniq<T extends Record<'_id', string>>(items: T[]) {
+  const usedIDs = new Set<string>();
+  const unique = new Set(
+    items.filter(({ _id: id }) => !usedIDs.has(id) && usedIDs.add(id)),
+  );
+  const result = [...unique];
   return result;
 }

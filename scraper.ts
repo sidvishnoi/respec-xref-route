@@ -9,7 +9,7 @@ import { spawn } from 'child_process';
 import Trie from 'compact-prefix-tree/cjs';
 import { SUPPORTED_TYPES, DATA_DIR } from './constants';
 import { Data } from './cache';
-import { uniq } from './utils';
+import { objectHash } from './utils';
 
 const { readdir, readFile, writeFile } = fs;
 
@@ -25,24 +25,32 @@ const OUTFILE_SPECMAP = resolvePath(OUT_DIR_BASE, './specmap.json');
 type ParsedDataEntry = ReturnType<typeof parseData>[0];
 
 interface DataByTerm {
-  [term: string]: Omit<ParsedDataEntry, 'key' | 'isExported'>[];
+  $$data: {
+    [term: string]: Omit<ParsedDataEntry, 'key' | 'isExported'>[];
+  };
+  $$aliases: {
+    [term: string]: string[];
+  };
 }
 interface DataBySpec {
   [shortname: string]: Omit<ParsedDataEntry, 'shortname' | 'isExported'>[];
 }
 
-const log = (...args: any[]) => console.log('(xref/scraper)', ...args);
+const log = (...args: any[]) => true || console.log('(xref/scraper)', ...args);
 const logError = (...args: any[]) => console.error('(xref/scraper)', ...args);
 
+// main();
+
 export async function main() {
-  const hasUpdated = await updateInputSource();
+  const hasUpdated = true || (await updateInputSource());
   if (!hasUpdated) {
     log('Nothing to update');
     return false;
   }
 
   log(`Reading files from ${INPUT_ANCHORS_DIR}`);
-  const files = await readdir(INPUT_ANCHORS_DIR);
+  let files = await readdir(INPUT_ANCHORS_DIR);
+  files = [files.find(f => f.includes('anchors-ad'))!];
 
   log(`Reading ${files.length} files...`);
   const content = await Promise.all(
@@ -59,7 +67,10 @@ export async function main() {
   // as https://html.spec.whatwg.org/multipage/ belongs to `urls`
   const trie = new Trie(urls);
 
-  const dataByTerm: DataByTerm = Object.create(null);
+  const dataByTerm: DataByTerm = {
+    $$data: Object.create(null),
+    $$aliases: Object.create(null),
+  };
   const dataBySpec: DataBySpec = Object.create(null);
   const errorURIs: string[] = [];
   log(`Processing ${files.length} files...`);
@@ -159,6 +170,7 @@ function parseData(content: string, errorURIs: string[], trie: Trie) {
         }
         const normalizedURI = uri.replace(prefix, '');
         return {
+          _id: '',
           key: normalizeKey(key, type),
           isExported: isExported === '1',
           type,
@@ -176,23 +188,52 @@ function parseData(content: string, errorURIs: string[], trie: Trie) {
       }
     });
 
-  const filtered = termData.filter(
-    term => term.isExported && SUPPORTED_TYPES.has(term.type),
-  );
+  const filtered = termData
+    .filter(term => term.isExported && SUPPORTED_TYPES.has(term.type))
+    .filter(term => term.type === 'method' && term.key.startsWith('add('));
 
-  return uniq(filtered);
+  filtered.forEach(term => {
+    const { key, ...rest } = term;
+    term._id = objectHash(rest);
+  });
+  return filtered;
 }
 
-function updateDataByTerm(terms: ParsedDataEntry[], data: DataByTerm) {
+export function updateDataByTerm(terms: ParsedDataEntry[], data: DataByTerm) {
+  const idMap: Record<string, Set<string>> = Object.create(null);
+
   for (const { key, isExported, ...termData } of terms) {
-    if (!data[key]) data[key] = [];
-    data[key].push(termData);
+    const { _id } = termData;
+    if (!data.$$data[key]) data.$$data[key] = [];
+    if (!idMap[_id]) idMap[_id] = new Set();
+    data.$$data[key].push(termData);
+    idMap[_id].add(key);
 
     if (termData.type === 'method' && /\(.+\)/.test(key)) {
       // add another entry without the arguments
       const methodWithoutArgs = key.replace(/\(.+\)/, '()');
-      if (!data[methodWithoutArgs]) data[methodWithoutArgs] = [];
-      data[methodWithoutArgs].push(termData);
+      idMap[_id].add(methodWithoutArgs);
+    }
+  }
+
+  const aliases: Record<string, Set<string>> = Object.create(null);
+  for (const entries of Object.values(idMap)) {
+    for (const entry of entries) {
+      for (const e of entries) {
+        if (!aliases[e]) {
+          if (!aliases[entry]) {
+            aliases[entry] = new Set();
+          }
+          if (entry !== e || (entry === e && /\(\)$/.test(e))) {
+            aliases[entry].add(e);
+          }
+        }
+      }
+    }
+  }
+  for (const [key, value] of Object.entries(aliases)) {
+    if (value.size) {
+      data.$$aliases[key] = [...value].sort();
     }
   }
 }
