@@ -34,9 +34,14 @@ interface DataBySpec {
 const log = (...args: any[]) => console.log('(xref/scraper)', ...args);
 const logError = (...args: any[]) => console.error('(xref/scraper)', ...args);
 
-export async function main() {
+const defaultOptions = {
+  forceUpdate: false,
+};
+
+export async function main(options?: typeof defaultOptions) {
+  options = { ...options, ...defaultOptions };
   const hasUpdated = await updateInputSource();
-  if (!hasUpdated) {
+  if (!hasUpdated && !options.forceUpdate) {
     log('Nothing to update');
     return false;
   }
@@ -246,4 +251,11 @@ async function getSpecsMetadata() {
 
   const urls = [...specUrls].sort();
   return { urls, specMap };
+}
+
+if (require.main === module) {
+  main({ forceUpdate: true }).catch(err => {
+    console.error(err);
+    process.exit(1);
+  });
 }
