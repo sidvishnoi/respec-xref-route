@@ -139,49 +139,48 @@ function parseData(content: string, errorURIs: string[], trie: Trie) {
 
   const sections = normalizedContent.split('\n-\n').filter(Boolean);
 
-  // format each section to convert data into a usable form
-  const termData = sections
-    .map(section => section.split('\n'))
+  const termData = [];
+  for (const section of sections) {
+    const lines = section.split('\n');
     // convert lines (array) to an object for easier access
-    .map(lines => {
-      const [
-        key,
+    const [
+      key,
+      type,
+      spec,
+      shortname,
+      level,
+      status,
+      uri,
+      isExported,
+      normative,
+      ...forContext
+    ] = lines;
+    const dataFor = forContext.filter(Boolean);
+    try {
+      const { prefix, isProper } = trie.prefix(uri);
+      if (!isProper && !trie.words.has(prefix)) {
+        // the second check above is redundant,
+        // but serves as an additional safety measure
+        errorURIs.push(uri);
+      }
+      const normalizedURI = uri.replace(prefix, '');
+      termData.push({
+        key: normalizeKey(key, type),
+        isExported: isExported === '1',
         type,
         spec,
         shortname,
-        level,
         status,
-        uri,
-        isExported,
-        normative,
-        ...forContext
-      ] = lines;
-      const dataFor = forContext.filter(Boolean);
-      try {
-        const { prefix, isProper } = trie.prefix(uri);
-        if (!isProper && !trie.words.has(prefix)) {
-          // the second check above is redundant,
-          // but serves as an additional safety measure
-          errorURIs.push(uri);
-        }
-        const normalizedURI = uri.replace(prefix, '');
-        return {
-          key: normalizeKey(key, type),
-          isExported: isExported === '1',
-          type,
-          spec,
-          shortname,
-          status,
-          uri: normalizedURI,
-          normative: normative === '1',
-          for: dataFor.length > 0 ? dataFor : undefined,
-        };
-      } catch (error) {
-        logError('Error while processing section:');
-        logError(lines);
-        throw error;
-      }
-    });
+        uri: normalizedURI,
+        normative: normative === '1',
+        for: dataFor.length > 0 ? dataFor : undefined,
+      });
+    } catch (error) {
+      logError('Error while processing section:');
+      logError(lines);
+      throw error;
+    }
+  }
 
   const filtered = termData.filter(
     term => term.isExported && SUPPORTED_TYPES.has(term.type),
