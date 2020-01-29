@@ -105,6 +105,7 @@ function updateInputSource() {
   const cwd = shouldClone ? DATA_DIR : INPUT_DIR_BASE;
 
   return new Promise<boolean>((resolve, reject) => {
+    log('Pulling latest changes...');
     const git = spawn('git', args, { cwd });
     let hasUpdated = true;
     git.stdout.on('data', (data: ArrayBuffer) => {
