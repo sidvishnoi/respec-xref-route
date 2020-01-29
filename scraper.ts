@@ -37,9 +37,10 @@ const logError = (...args: any[]) => console.error('(xref/scraper)', ...args);
 const defaultOptions = {
   forceUpdate: false,
 };
+type Options = typeof defaultOptions;
 
-export async function main(options?: typeof defaultOptions) {
-  options = { ...options, ...defaultOptions };
+export async function main(options: Partial<Options> = {}) {
+  options = { ...defaultOptions, ...options } as Options;
   const hasUpdated = await updateInputSource();
   if (!hasUpdated && !options.forceUpdate) {
     log('Nothing to update');
