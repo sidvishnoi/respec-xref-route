@@ -150,6 +150,8 @@ function filter(item: DataEntry, query: Query, options: Options) {
         isAcceptable = IDL_TYPES.has(item.type);
       } else if (derivedTypes.includes('_CONCEPT_')) {
         isAcceptable = CONCEPT_TYPES.has(item.type);
+        // XXX: https://github.com/sidvishnoi/respec-xref-route/issues/57
+        isAcceptable = isAcceptable || item.type === 'element';
       }
     }
   }
