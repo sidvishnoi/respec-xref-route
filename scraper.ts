@@ -137,47 +137,21 @@ function parseData(content: string, errorURIs: string[], trie: Trie) {
   const re = /\r\n|\n\r|\n|\r/g; // because of Windows!
   const normalizedContent = content.replace(re, '\n');
 
-  const sections = normalizedContent.split('\n-\n').filter(Boolean);
-
   const termData = [];
-  for (const section of sections) {
-    const lines = section.split('\n');
-    // convert lines (array) to an object for easier access
-    const [
-      key,
-      type,
-      spec,
-      shortname,
-      level,
-      status,
-      uri,
-      isExported,
-      normative,
-      ...forContext
-    ] = lines;
-    const dataFor = forContext.filter(Boolean);
+  for (const section of normalizedContent.split('\n-\n')) {
+    if (!section) continue;
+
     try {
-      const { prefix, isProper } = trie.prefix(uri);
-      if (!isProper && !trie.words.has(prefix)) {
-        // the second check above is redundant,
-        // but serves as an additional safety measure
-        errorURIs.push(uri);
+      const anchorSection = parseAnchorSection(section);
+      const { prefix, isProper } = trie.prefix(anchorSection.uri);
+      if (!isProper) {
+        errorURIs.push(anchorSection.uri);
       }
-      const normalizedURI = uri.replace(prefix, '');
-      termData.push({
-        key: normalizeKey(key, type),
-        isExported: isExported === '1',
-        type,
-        spec,
-        shortname,
-        status,
-        uri: normalizedURI,
-        normative: normative === '1',
-        for: dataFor.length > 0 ? dataFor : undefined,
-      });
+      anchorSection.uri = anchorSection.uri.replace(prefix, '');
+      termData.push(anchorSection);
     } catch (error) {
       logError('Error while processing section:');
-      logError(lines);
+      logError(section);
       throw error;
     }
   }
@@ -187,6 +161,35 @@ function parseData(content: string, errorURIs: string[], trie: Trie) {
   );
 
   return uniq(filtered);
+}
+
+function parseAnchorSection(section: string) {
+  const [
+    term,
+    type,
+    spec,
+    shortname,
+    level,
+    status,
+    uri,
+    isExported,
+    normative,
+    ...forContext
+  ] = section.split('\n');
+
+  const dataFor = forContext.filter(Boolean);
+
+  return {
+    key: normalizeKey(term, type),
+    isExported: isExported === '1',
+    type,
+    spec,
+    shortname,
+    status,
+    uri, // This is full URL to term here
+    normative: normative === '1',
+    for: dataFor.length > 0 ? dataFor : undefined,
+  };
 }
 
 function updateDataByTerm(terms: ParsedDataEntry[], data: DataByTerm) {
