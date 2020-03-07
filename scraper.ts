@@ -25,7 +25,7 @@ const OUTFILE_SPECMAP = resolvePath(OUT_DIR_BASE, './specmap.json');
 type ParsedDataEntry = ReturnType<typeof parseData>[0];
 
 interface DataByTerm {
-  [term: string]: Omit<ParsedDataEntry, 'key' | 'isExported'>[];
+  [term: string]: Omit<ParsedDataEntry, 'term' | 'isExported'>[];
 }
 interface DataBySpec {
   [shortname: string]: Omit<ParsedDataEntry, 'shortname' | 'isExported'>[];
@@ -180,7 +180,7 @@ function parseAnchorSection(section: string) {
   const dataFor = forContext.filter(Boolean);
 
   return {
-    key: normalizeKey(term, type),
+    term: normalizeTerm(term, type),
     isExported: isExported === '1',
     type,
     spec,
@@ -193,13 +193,13 @@ function parseAnchorSection(section: string) {
 }
 
 function updateDataByTerm(terms: ParsedDataEntry[], data: DataByTerm) {
-  for (const { key, isExported, ...termData } of terms) {
-    if (!data[key]) data[key] = [];
-    data[key].push(termData);
+  for (const { term, isExported, ...termData } of terms) {
+    if (!data[term]) data[term] = [];
+    data[term].push(termData);
 
-    if (termData.type === 'method' && /\(.+\)/.test(key)) {
+    if (termData.type === 'method' && /\(.+\)/.test(term)) {
       // add another entry without the arguments
-      const methodWithoutArgs = key.replace(/\(.+\)/, '()');
+      const methodWithoutArgs = term.replace(/\(.+\)/, '()');
       if (!data[methodWithoutArgs]) data[methodWithoutArgs] = [];
       data[methodWithoutArgs].push(termData);
     }
@@ -213,14 +213,14 @@ function updateDataBySpec(terms: ParsedDataEntry[], data: DataBySpec) {
   }
 }
 
-function normalizeKey(key: string, type: string) {
+function normalizeTerm(term: string, type: string) {
   if (type === 'enum-value') {
-    return key.replace(/^"|"$/g, '');
+    return term.replace(/^"|"$/g, '');
   }
-  if (type === 'method' && !key.endsWith(')')) {
-    return key + '()';
+  if (type === 'method' && !term.endsWith(')')) {
+    return term + '()';
   }
-  return key;
+  return term;
 }
 
 async function getSpecsMetadata() {
