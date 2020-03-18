@@ -243,5 +243,10 @@ describe('filter@for', () => {
     expect(search({ term: 'for each', for: 'LisT' })).toEqual([
       { uri: '#list-iterate' },
     ]);
+
+    expect(search({ term: 'aborted', for: 'AbortSignal' })).toEqual([
+      { uri: '#dom-abortsignal-aborted' },
+    ]);
+    expect(search({ term: 'aborted', for: 'abortsignal' })).toEqual([]);
   });
 });
