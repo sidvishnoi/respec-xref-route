@@ -208,4 +208,14 @@ module.exports = {
       for: ['HTMLScriptElement'],
     },
   ],
+  'for each': [
+    {
+      type: 'dfn',
+      spec: 'infra',
+      shortname: 'infra',
+      status: 'current',
+      uri: '#list-iterate',
+      for: ['list', 'set'],
+    },
+  ],
 };

@@ -234,4 +234,14 @@ describe('filter@for', () => {
       { uri: 'obsolete.html#dom-script-event' },
     ]);
   });
+
+  it('tries lowercase forContext for concepts', () => {
+    expect(search({ term: 'for each', for: 'list' })).toEqual([
+      { uri: '#list-iterate' },
+    ]);
+
+    expect(search({ term: 'for each', for: 'LisT' })).toEqual([
+      { uri: '#list-iterate' },
+    ]);
+  });
 });
