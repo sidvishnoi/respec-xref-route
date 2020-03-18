@@ -48,9 +48,9 @@ describe('options', () => {
     const search = (q, opts) => _search([q], { ...opts }).result[0][1];
 
     it('returns only requested fields', () => {
-      expect(search({ term: 'Baseline' }, { fields: ['spec', 'uri'] })).toEqual(
-        [{ spec: 'font-metrics-api-1', uri: '#baseline' }],
-      );
+      expect(
+        search({ term: 'Baseline' }, { fields: ['spec', 'uri'] }),
+      ).toEqual([{ spec: 'font-metrics-api-1', uri: '#baseline' }]);
     });
 
     it('returns default fields if not specified', () => {
