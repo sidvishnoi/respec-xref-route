@@ -20,7 +20,9 @@ export const IDL_TYPES = new Set([
   'typedef',
 ]);
 
-export const CONCEPT_TYPES = new Set(['_CONCEPT_', 'dfn', 'event']);
+// XXX: `CONCEPT_TYPES` includes `element`: otherwise it'll break many specs.
+// https://github.com/sidvishnoi/respec-xref-route/issues/57
+export const CONCEPT_TYPES = new Set(['_CONCEPT_', 'dfn', 'event', 'element']);
 export const MARKUP_TYPES = new Set(['element', 'element-attr']);
 
 export const SUPPORTED_TYPES = new Set([
