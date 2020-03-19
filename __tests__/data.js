@@ -208,4 +208,24 @@ module.exports = {
       for: ['HTMLScriptElement'],
     },
   ],
+  'for each': [
+    {
+      type: 'dfn',
+      spec: 'infra',
+      shortname: 'infra',
+      status: 'current',
+      uri: '#list-iterate',
+      for: ['list', 'set'],
+    },
+  ],
+  aborted: [
+    {
+      type: 'attribute',
+      spec: 'dom',
+      shortname: 'dom',
+      status: 'snapshot',
+      uri: '#dom-abortsignal-aborted',
+      for: ['AbortSignal'],
+    },
+  ],
 };

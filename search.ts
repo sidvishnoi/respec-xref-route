@@ -160,6 +160,10 @@ function filter(item: DataEntry, query: Query, options: Options) {
       isAcceptable = !item.for;
     } else {
       isAcceptable = !!item.for && item.for.includes(forContext);
+      if (!isAcceptable && CONCEPT_TYPES.has(item.type)) {
+        isAcceptable =
+          !!item.for && item.for.includes(forContext.toLowerCase());
+      }
     }
   }
 
