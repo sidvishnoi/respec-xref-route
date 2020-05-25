@@ -120,23 +120,28 @@ function getTermData(query: Query, options: Options) {
     }
   }
 
-  const result = termData.filter(item => filter(item, query, options));
+  const filteredBySpec = filterBySpec(termData, query);
+  const result = filteredBySpec.filter(item => filter(item, query, options));
 
   cache.set(id, result);
   return result;
 }
 
-function filter(item: DataEntry, query: Query, options: Options) {
-  const { specs: specsLists, for: forContext, types } = query;
-  let isAcceptable = true;
-
-  if (Array.isArray(specsLists) && specsLists.length) {
-    const { spec, shortname } = item;
-    for (const specs of specsLists) {
-      isAcceptable = specs.includes(spec) || specs.includes(shortname);
-      if (isAcceptable) break;
-    }
+function filterBySpec(data: DataEntry[], query: Query) {
+  const { specs: specsLists } = query;
+  if (!Array.isArray(specsLists) || !specsLists.length) return data;
+  for (const specs of specsLists) {
+    const filteredBySpec = data.filter(
+      item => specs.includes(item.spec) || specs.includes(item.shortname),
+    );
+    if (filteredBySpec.length) return filteredBySpec;
   }
+  return [];
+}
+
+function filter(item: DataEntry, query: Query, options: Options) {
+  const { for: forContext, types } = query;
+  let isAcceptable = true;
 
   const derivedTypes =
     Array.isArray(types) && types.length ? types : options.types;
