@@ -21,7 +21,6 @@
     "clean": "rm -rf *.js *.d.ts",
     "dev": "tsc -w",
     "prepare": "npm run build",
-    "prepublishOnly": "npm run clean && npm run build",
     "pretest": "tsc --sourceMap",
     "test": "jest",
     "test:nobuild": "jest"
@@ -34,6 +33,10 @@
     "jest": "^26.0.1",
     "typescript": "^3.9.3"
   },
+  "files": [
+    "*.js",
+    "*.d.ts"
+  ],
   "jest": {
     "testRegex": "/__tests__/.*\\.test\\.(j|t)s$",
     "collectCoverageFrom": [
