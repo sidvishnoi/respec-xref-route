@@ -23,15 +23,16 @@
     "prepare": "npm run build",
     "prepublishOnly": "npm run clean && npm run build",
     "pretest": "tsc --sourceMap",
-    "test": "jest"
+    "test": "jest",
+    "test:nobuild": "jest"
   },
   "dependencies": {
-    "compact-prefix-tree": "^2.0.1"
+    "compact-prefix-tree": "^2.0.2"
   },
   "devDependencies": {
-    "@types/node": "^12.7.1",
-    "jest": "^24.8.0",
-    "typescript": "^3.5.3"
+    "@types/node": "^14.0.5",
+    "jest": "^26.0.1",
+    "typescript": "^3.9.3"
   },
   "jest": {
     "testRegex": "/__tests__/.*\\.test\\.(j|t)s$",
