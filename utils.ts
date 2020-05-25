@@ -84,3 +84,38 @@ export function uniq<T>(items: T[]) {
   const result = [...unique].map(str => JSON.parse(str) as typeof items[0]);
   return result;
 }
+
+export class Cache<K, V> {
+  #ttl = 0;
+  #map = new Map<K, { time: number; value: V }>();
+
+  constructor(ttl: number) {
+    this.#ttl = ttl;
+  }
+
+  set(key: K, value: V) {
+    this.#map.set(key, { time: Date.now(), value });
+  }
+
+  get(key: K) {
+    const entry = this.#map.get(key);
+    if (!entry) return;
+    const { time, value } = entry;
+    if (Date.now() - time < this.#ttl) {
+      return value;
+    }
+    this.#map.delete(key);
+  }
+
+  invalidate() {
+    for (const [key, { time }] of this.#map.entries()) {
+      if (Date.now() - time > this.#ttl) {
+        this.#map.delete(key);
+      }
+    }
+  }
+
+  clear() {
+    this.#map.clear();
+  }
+}
