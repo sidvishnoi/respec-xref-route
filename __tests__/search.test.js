@@ -162,6 +162,10 @@ describe('filter@specs', () => {
     expect(search({ term: 'script', specs: [['dom'], ['svg2']] })).toEqual([
       { uri: 'interact.html#elementdef-script' },
     ]);
+
+    expect(search({ term: 'body', specs: [['fetch'], ['html']] })).toEqual([
+      { uri: '#concept-body' },
+    ]);
   });
 });
 

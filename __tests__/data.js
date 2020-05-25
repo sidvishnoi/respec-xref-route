@@ -59,6 +59,20 @@ module.exports = {
       uri: 'text.html#TermBaseline',
     },
   ],
+  body: [
+    {
+      shortname: 'fetch',
+      spec: 'fetch',
+      uri: '#concept-body',
+      type: 'dfn',
+    },
+    {
+      shortname: 'html',
+      spec: 'html',
+      uri: 'sections.html#the-body-element',
+      type: 'element',
+    },
+  ],
   script: [
     {
       type: 'enum-value',
