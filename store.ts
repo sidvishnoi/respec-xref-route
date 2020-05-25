@@ -24,8 +24,8 @@ export const store: Store = {
   byTerm: {},
   specmap: {},
   fill() {
-    this.bySpec = readJson('xref.json');
-    this.byTerm = readJson('specs.json');
+    this.byTerm = readJson('xref.json');
+    this.bySpec = readJson('specs.json');
     this.specmap = readJson('specmap.json');
     this.version = Date.now();
   },
