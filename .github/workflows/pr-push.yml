@@ -8,6 +8,7 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -15,7 +16,6 @@ jobs:
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      - uses: actions/checkout@v2
       - run: yarn install --frozen-lockfile --ignore-scripts
       - run: yarn test --coverage --colors
         env:
