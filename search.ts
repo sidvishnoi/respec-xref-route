@@ -1,7 +1,6 @@
 import { QUERY_CACHE_DURATION, IDL_TYPES, CONCEPT_TYPES } from './constants';
-import { cache } from './cache';
 import { store, Data } from './store';
-import { objectHash, pickFields, textVariations } from './utils';
+import { objectHash, pickFields, textVariations, Cache } from './utils';
 
 type Type =
   | 'attribute'
@@ -61,6 +60,8 @@ const defaultOptions: Options = {
   types: [],
 };
 
+export const cache = new Cache<string, DataEntry[]>(QUERY_CACHE_DURATION);
+
 export function search(queries: Query[] = [], opts: Partial<Options> = {}) {
   const data = store.get('by_term');
   const options = { ...defaultOptions, ...opts };
@@ -93,13 +94,8 @@ export function search(queries: Query[] = [], opts: Partial<Options> = {}) {
 function getTermData(query: Query, data: Data['by_term'], options: Options) {
   const { id, term: inputTerm, types = [] } = query;
 
-  if (cache.has(id)) {
-    const { time, value } = cache.get(id)!;
-    if (Date.now() - time < QUERY_CACHE_DURATION) {
-      return value;
-    }
-    cache.delete(id);
-  }
+  const cachedValue = cache.get(id);
+  if (cachedValue) return cachedValue;
 
   const isConcept = types.some(t => CONCEPT_TYPES.has(t));
   const isIDL = types.some(t => IDL_TYPES.has(t));
@@ -119,7 +115,7 @@ function getTermData(query: Query, data: Data['by_term'], options: Options) {
 
   const result = termData.filter(item => filter(item, query, options));
 
-  cache.set(id, { time: Date.now(), value: result });
+  cache.set(id, result);
   return result;
 }
 

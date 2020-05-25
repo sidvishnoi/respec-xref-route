@@ -1,4 +1,4 @@
-const { search: _search } = require('../search');
+const { search: _search, cache } = require('../search');
 
 /**
  * @param {import('../search').Query} query
@@ -9,11 +9,6 @@ const search = (query, options) => {
   return response.result[0][1];
 };
 
-jest.mock('../cache', () => ({
-  get cache() {
-    return new Map();
-  },
-}));
 jest.mock('../store', () => ({
   store: {
     get(key) {
@@ -28,6 +23,8 @@ jest.mock('../store', () => ({
 }));
 
 describe('options', () => {
+  beforeEach(() => cache.clear());
+
   describe('query', () => {
     it('adds query back to response if requested', () => {
       expect(_search([], { query: true })).toEqual({ result: [], query: [] });
