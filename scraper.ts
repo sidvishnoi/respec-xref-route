@@ -8,7 +8,7 @@ import { resolve as resolvePath, join as joinPath } from 'path';
 import { spawn } from 'child_process';
 import Trie from 'compact-prefix-tree/cjs';
 import { SUPPORTED_TYPES, DATA_DIR } from './constants';
-import { Data } from './cache';
+import { Data } from './store';
 import { uniq } from './utils';
 
 const { readdir, readFile, writeFile } = fs;

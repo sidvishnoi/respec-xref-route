@@ -1,5 +1,6 @@
 import { QUERY_CACHE_DURATION, IDL_TYPES, CONCEPT_TYPES } from './constants';
-import { cache, Data } from './cache';
+import { cache } from './cache';
+import { store, Data } from './store';
 import { objectHash, pickFields, textVariations } from './utils';
 
 type Type =
@@ -61,13 +62,11 @@ const defaultOptions: Options = {
 };
 
 export function search(queries: Query[] = [], opts: Partial<Options> = {}) {
-  const data = cache.get('by_term');
+  const data = store.get('by_term');
   const options = { ...defaultOptions, ...opts };
 
   const response: Response = { result: [] };
   if (options.query) response.query = [];
-
-  const queryCache = cache.get('query');
 
   for (const query of queries) {
     if (Array.isArray(query.specs) && !Array.isArray(query.specs[0])) {
@@ -78,7 +77,7 @@ export function search(queries: Query[] = [], opts: Partial<Options> = {}) {
     if (!query.id) {
       query.id = objectHash(query);
     }
-    const termData = getTermData(query, queryCache, data, options);
+    const termData = getTermData(query, data, options);
     let prefereredData = filterBySpecType(termData, options.spec_type);
     prefereredData = filterPreferLatestVersion(prefereredData);
     const result = prefereredData.map(item => pickFields(item, options.fields));
@@ -91,12 +90,7 @@ export function search(queries: Query[] = [], opts: Partial<Options> = {}) {
   return response;
 }
 
-function getTermData(
-  query: Query,
-  cache: Data['query'],
-  data: Data['by_term'],
-  options: Options,
-) {
+function getTermData(query: Query, data: Data['by_term'], options: Options) {
   const { id, term: inputTerm, types = [] } = query;
 
   if (cache.has(id)) {
