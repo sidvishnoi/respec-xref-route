@@ -54,7 +54,7 @@ const specStatusAlias = new Map([
   ['official', 'snapshot'],
 ]);
 
-const defaultOptions: Options = {
+export const defaultOptions: Options = {
   fields: ['shortname', 'spec', 'type', 'for', 'normative', 'uri'],
   spec_type: ['draft', 'official'],
   types: [],
@@ -69,18 +69,7 @@ export function search(queries: Query[] = [], opts: Partial<Options> = {}) {
   if (options.query) response.query = [];
 
   for (const query of queries) {
-    if (Array.isArray(query.specs) && !Array.isArray(query.specs[0])) {
-      // @ts-ignore
-      query.specs = [query.specs]; // for backward compatibility
-    }
-
-    if (!query.id) {
-      query.id = objectHash(query);
-    }
-    const termData = getTermData(query, options);
-    let prefereredData = filterBySpecType(termData, options.spec_type);
-    prefereredData = filterPreferLatestVersion(prefereredData);
-    const result = prefereredData.map(item => pickFields(item, options.fields));
+    const result = searchOne(query, options);
     response.result.push([query.id, result]);
     if (options.query) {
       response.query!.push(query);
@@ -88,6 +77,25 @@ export function search(queries: Query[] = [], opts: Partial<Options> = {}) {
   }
 
   return response;
+}
+
+export function searchOne(query: Query, options: Options) {
+  normalizeQuery(query);
+  const termData = getTermData(query, options);
+  let prefereredData = filterBySpecType(termData, options.spec_type);
+  prefereredData = filterPreferLatestVersion(prefereredData);
+  const result = prefereredData.map(item => pickFields(item, options.fields));
+  return result;
+}
+
+function normalizeQuery(query: Query) {
+  if (Array.isArray(query.specs) && !Array.isArray(query.specs[0])) {
+    // @ts-ignore
+    query.specs = [query.specs]; // for backward compatibility
+  }
+  if (!query.id) {
+    query.id = objectHash(query);
+  }
 }
 
 function getTermData(query: Query, options: Options) {
