@@ -8,14 +8,8 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
-      - run: npm install
-      - name: Run tests
-        run: npm test -- --coverage --colors
+      - uses: actions/checkout@v2
+      - run: yarn install --frozen-lockfile --ignore-scripts
+      - run: yarn test --coverage --colors
         env:
           DATA_DIR: ./data/ # can be anything as tests don't use filesystem
