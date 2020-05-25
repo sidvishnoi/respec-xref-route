@@ -1,5 +1,5 @@
 import { QUERY_CACHE_DURATION, IDL_TYPES, CONCEPT_TYPES } from './constants';
-import { store, Data } from './store';
+import { store } from './store';
 import { objectHash, pickFields, textVariations, Cache } from './utils';
 
 type Type =
@@ -63,7 +63,6 @@ const defaultOptions: Options = {
 export const cache = new Cache<string, DataEntry[]>(QUERY_CACHE_DURATION);
 
 export function search(queries: Query[] = [], opts: Partial<Options> = {}) {
-  const data = store.get('by_term');
   const options = { ...defaultOptions, ...opts };
 
   const response: Response = { result: [] };
@@ -78,7 +77,7 @@ export function search(queries: Query[] = [], opts: Partial<Options> = {}) {
     if (!query.id) {
       query.id = objectHash(query);
     }
-    const termData = getTermData(query, data, options);
+    const termData = getTermData(query, options);
     let prefereredData = filterBySpecType(termData, options.spec_type);
     prefereredData = filterPreferLatestVersion(prefereredData);
     const result = prefereredData.map(item => pickFields(item, options.fields));
@@ -91,7 +90,7 @@ export function search(queries: Query[] = [], opts: Partial<Options> = {}) {
   return response;
 }
 
-function getTermData(query: Query, data: Data['by_term'], options: Options) {
+function getTermData(query: Query, options: Options) {
   const { id, term: inputTerm, types = [] } = query;
 
   const cachedValue = cache.get(id);
@@ -103,11 +102,11 @@ function getTermData(query: Query, data: Data['by_term'], options: Options) {
   let term = shouldTreatAsConcept ? inputTerm.toLowerCase() : inputTerm;
   if (inputTerm === '""') term = '';
 
-  let termData = data[term] || [];
+  let termData = store.byTerm[term] || [];
   if (!termData.length && shouldTreatAsConcept) {
     for (const altTerm of textVariations(term)) {
-      if (altTerm in data) {
-        termData = data[altTerm];
+      if (altTerm in store.byTerm) {
+        termData = store.byTerm[altTerm];
         break;
       }
     }

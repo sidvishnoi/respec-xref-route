@@ -8,8 +8,8 @@ import { resolve as resolvePath, join as joinPath } from 'path';
 import { spawn } from 'child_process';
 import Trie from 'compact-prefix-tree/cjs';
 import { SUPPORTED_TYPES, DATA_DIR } from './constants';
-import { Data } from './store';
 import { uniq } from './utils';
+import { Store } from './store';
 
 const { readdir, readFile, writeFile } = fs;
 
@@ -239,7 +239,7 @@ async function getSpecsMetadata() {
   const urlFileContent = await readFile(SPECS_JSON, 'utf8');
   const data: SpecsJSON = JSON.parse(urlFileContent);
 
-  const specMap: Data['specmap'] = Object.create(null);
+  const specMap: Store['specmap'] = Object.create(null);
   const specUrls = new Set<string>();
 
   for (const [spec, entry] of Object.entries(data)) {

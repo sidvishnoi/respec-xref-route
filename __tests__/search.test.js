@@ -11,14 +11,7 @@ const search = (query, options) => {
 
 jest.mock('../store', () => ({
   store: {
-    get(key) {
-      switch (key) {
-        case 'by_term':
-          return require('./data');
-        default:
-          throw new Error('Invalid cache key');
-      }
-    },
+    byTerm: require('./data'),
   },
 }));
 
