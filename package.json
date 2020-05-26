@@ -48,5 +48,6 @@
     "arrowParens": "avoid",
     "singleQuote": true,
     "trailingComma": "all"
-  }
+  },
+  "funding": "https://opencollective.com/respec/"
 }
