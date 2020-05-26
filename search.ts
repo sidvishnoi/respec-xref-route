@@ -79,30 +79,47 @@ export function search(queries: Query[] = [], opts: Partial<Options> = {}) {
   return response;
 }
 
-export function searchOne(query: Query, options: Options) {
-  normalizeQuery(query);
-  const termData = getTermData(query, options);
-  let prefereredData = filterBySpecType(termData, options.spec_type);
+export function searchOne(query: Query, options = defaultOptions) {
+  normalizeQuery(query, options);
+
+  const filtered = filter(query, options);
+
+  let prefereredData = filterBySpecType(filtered, options.spec_type);
   prefereredData = filterPreferLatestVersion(prefereredData);
   const result = prefereredData.map(item => pickFields(item, options.fields));
   return result;
 }
 
-function normalizeQuery(query: Query) {
+function normalizeQuery(query: Query, options: Options) {
   if (Array.isArray(query.specs) && !Array.isArray(query.specs[0])) {
     // @ts-ignore
     query.specs = [query.specs]; // for backward compatibility
+  }
+  if (!Array.isArray(query.types) || !query.types.length) {
+    query.types = options.types;
   }
   if (!query.id) {
     query.id = objectHash(query);
   }
 }
 
-function getTermData(query: Query, options: Options) {
-  const { id, term: inputTerm, types = [] } = query;
+function filter(query: Query, options: Options) {
+  const { id } = query;
 
   const cachedValue = cache.get(id);
   if (cachedValue) return cachedValue;
+
+  const byTerm = filterByTerm(query);
+  const bySpec = filterBySpec(byTerm, query);
+  const byType = filterByType(bySpec, query);
+  const result = filterByForContext(byType, query, options);
+
+  cache.set(id, result);
+  return result;
+}
+
+function filterByTerm(query: Query) {
+  const { term: inputTerm, types = [] } = query;
 
   const isConcept = types.some(t => CONCEPT_TYPES.has(t));
   const isIDL = types.some(t => IDL_TYPES.has(t));
@@ -119,12 +136,7 @@ function getTermData(query: Query, options: Options) {
       }
     }
   }
-
-  const filteredBySpec = filterBySpec(termData, query);
-  const result = filteredBySpec.filter(item => filter(item, query, options));
-
-  cache.set(id, result);
-  return result;
+  return termData;
 }
 
 function filterBySpec(data: DataEntry[], query: Query) {
@@ -139,48 +151,45 @@ function filterBySpec(data: DataEntry[], query: Query) {
   return [];
 }
 
-function filter(item: DataEntry, query: Query, options: Options) {
-  const { for: forContext, types } = query;
-  let isAcceptable = true;
+function filterByType(data: DataEntry[], query: Query) {
+  const types = query.types!;
+  if (!types.length) return data;
 
-  const derivedTypes =
-    Array.isArray(types) && types.length ? types : options.types;
-  if (isAcceptable && derivedTypes.length) {
-    isAcceptable = derivedTypes.includes(item.type);
-    if (!isAcceptable) {
-      if (derivedTypes.includes('_IDL_')) {
-        isAcceptable = IDL_TYPES.has(item.type);
-      } else if (derivedTypes.includes('_CONCEPT_')) {
-        isAcceptable = CONCEPT_TYPES.has(item.type);
-      }
+  const isIDL = types.includes('_IDL_');
+  const isConcept = types.includes('_CONCEPT_');
+  return data.filter(({ type }) => {
+    return (
+      types.includes(type) ||
+      (isIDL && IDL_TYPES.has(type)) ||
+      (isConcept && CONCEPT_TYPES.has(type))
+    );
+  });
+}
+
+function filterByForContext(data: DataEntry[], query: Query, options: Options) {
+  const { for: forContext } = query;
+  const shouldFilter = options.all ? typeof forContext === 'string' : true;
+  if (!shouldFilter) return data;
+
+  return data.filter(item => {
+    if (!forContext) return !item.for;
+    if (!!item.for && item.for.includes(forContext)) return true;
+    if (CONCEPT_TYPES.has(item.type)) {
+      return !!item.for && item.for.includes(forContext.toLowerCase());
     }
-  }
-
-  // if `options.all` is true and `forContext` isn't provided, we skip the this filter
-  if (isAcceptable && (options.all ? typeof forContext === 'string' : true)) {
-    if (!forContext) {
-      isAcceptable = !item.for;
-    } else {
-      isAcceptable = !!item.for && item.for.includes(forContext);
-      if (!isAcceptable && CONCEPT_TYPES.has(item.type)) {
-        isAcceptable =
-          !!item.for && item.for.includes(forContext.toLowerCase());
-      }
-    }
-  }
-
-  return isAcceptable;
+    return false;
+  });
 }
 
 function filterBySpecType(data: DataEntry[], specTypes: SpecType[]) {
   if (!specTypes.length) return data;
 
   const preferredType = specStatusAlias.get(specTypes[0]) || specTypes[0];
-  const preferredData: DataEntry[] = [];
-  data.sort((a, b) =>
+  const sorted = [...data].sort((a, b) =>
     a.status === preferredType ? -1 : b.status === preferredType ? 1 : 0,
   );
-  for (const item of data) {
+  const preferredData: DataEntry[] = [];
+  for (const item of sorted) {
     if (
       item.status === preferredType ||
       !preferredData.find(it => item.spec === it.spec && item.type === it.type)

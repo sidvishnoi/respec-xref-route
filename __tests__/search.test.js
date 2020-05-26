@@ -28,11 +28,13 @@ describe('options', () => {
       const getQuery = query => _search([query], { query: true }).query[0];
       expect(getQuery({ term: 'html' })).toEqual({
         term: 'html',
-        id: 'e65068091bad3c383def394a09acbebf591b4f58',
+        id: '4c0b68a3658fd64c8a77242fffd6e4e615331375',
+        types: [],
       });
       expect(getQuery({ term: 'html', id: 'ID' })).toEqual({
         term: 'html',
         id: 'ID',
+        types: [],
       });
     });
   });
@@ -87,7 +89,7 @@ describe('backward compatibility', () => {
   test('allows query.specs as string[]', () => {
     const inputQuery = { specs: ['html'], id: 'ID' };
     const outputQuery = _search([inputQuery], { query: true }).query[0];
-    expect(outputQuery).toEqual({ specs: [['html']], id: 'ID' });
+    expect(outputQuery).toEqual({ specs: [['html']], id: 'ID', types: [] });
   });
 });
 
