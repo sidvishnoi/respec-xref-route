@@ -7,7 +7,7 @@ import { promises as fs, existsSync } from 'fs';
 import { resolve as resolvePath, join as joinPath } from 'path';
 import { spawn } from 'child_process';
 import Trie from 'compact-prefix-tree/cjs';
-import { SUPPORTED_TYPES, DATA_DIR } from './constants';
+import { SUPPORTED_TYPES, DATA_DIR, CSS_TYPES_INPUT } from './constants';
 import { uniq } from './utils';
 import { Store } from './store';
 
@@ -178,11 +178,11 @@ function parseAnchorSection(section: string) {
   ] = section.split('\n');
 
   const dataFor = forContext.filter(Boolean);
-
+  const normalizedType = CSS_TYPES_INPUT.has(type) ? `css-${type}` : type;
   return {
-    term: normalizeTerm(term, type),
+    term: normalizeTerm(term, normalizedType),
     isExported: isExported === '1',
-    type,
+    type: normalizedType,
     spec,
     shortname,
     status,
