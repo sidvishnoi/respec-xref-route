@@ -166,8 +166,8 @@ function normalizeTerm(term: string, type: string) {
 
 async function getSpecsData() {
   log(`Getting spec metadata from ${SPECS_JSON}`);
-  const urlFileContent = await readFile(SPECS_JSON, 'utf8');
-  const data: Array<SpecsJSON> = JSON.parse(urlFileContent).results;
+  const urlFileContent = await readJSON(SPECS_JSON);
+  const data: Array<SpecsJSON> = urlFileContent.results;
 
   const specMap: Store['specmap'] = Object.create(null);
   const specUrls = new Set<string>();
@@ -177,7 +177,8 @@ async function getSpecsData() {
     specUrls.add(entry.nightly.url);
     if (entry.release && entry.release.url) specUrls.add(entry.release.url);
     if (entry.dfns) {
-      const dfns = JSON.parse(await readFile(joinPath(INPUT_DIR_BASE, entry.dfns), 'utf8')).dfns;
+      const dfnsData = await readJSON(joinPath(INPUT_DIR_BASE, entry.dfns));
+      const dfns: InputDfn[] = dfnsData.dfns;
       dfnSources.add({
         series: entry.series.shortname,
         spec: entry.shortname,
@@ -195,6 +196,11 @@ async function getSpecsData() {
 
   const urls = [...specUrls].sort();
   return { urls, specMap, dfnSources };
+}
+
+async function readJSON(filePath: string) {
+  const text = await readFile(filePath, 'utf-8');
+  return JSON.parse(text);
 }
 
 if (require.main === module) {
