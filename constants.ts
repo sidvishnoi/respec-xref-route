@@ -13,6 +13,7 @@ export const IDL_TYPES = new Set([
   'dictionary',
   'enum-value',
   'enum',
+  'event',
   'exception',
   'extended-attribute',
   'interface',
