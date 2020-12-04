@@ -50,7 +50,7 @@ export async function main(options: Partial<Options> = {}) {
 
   const dataByTerm: DataByTerm = Object.create(null);
   const dataBySpec: DataBySpec = Object.create(null);
-  log(`Processing ${dfnSources.size} files...`);
+  log(`Processing ${dfnSources.length} files...`);
   for (const source of dfnSources) {
     try {
       const terms = parseData(source);
@@ -178,7 +178,7 @@ async function getSpecsData() {
 
   const specMap: Store['specmap'] = Object.create(null);
   const specUrls = new Set<string>();
-  const dfnSources = new Set<DfnsJSON>();
+  const dfnSources: DfnsJSON[] = [];
 
   for (const entry of data) {
     specUrls.add(entry.nightly.url);
@@ -186,7 +186,7 @@ async function getSpecsData() {
     if (entry.dfns) {
       const dfnsData = await readJSON(joinPath(INPUT_DIR_BASE, entry.dfns));
       const dfns: InputDfn[] = dfnsData.dfns;
-      dfnSources.add({
+      dfnSources.push({
         series: entry.series.shortname,
         spec: entry.shortname,
         url: entry.nightly.url,
