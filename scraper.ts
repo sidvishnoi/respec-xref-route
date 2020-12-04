@@ -25,6 +25,7 @@ type ParsedDataEntry = ReturnType<typeof parseData>[0];
 interface DfnSource {
   series: string;
   spec: string;
+  url: string;
   dfns: Array<WebrefDfn>;
 }
 
@@ -137,7 +138,7 @@ function parseData(source: DfnSource, errorURIs: string[]) {
   const termData = [];
   for (const dfn of dfns) {
     for (const term of dfn.linkingText) {
-      const mapped = mapDefinition(dfn, term, source.spec, source.series);
+      const mapped = mapDefinition(dfn, term, source.spec, source.series, source.url);
       termData.push(mapped);
     }
   }
@@ -149,7 +150,7 @@ function parseData(source: DfnSource, errorURIs: string[]) {
   return uniq(filtered);
 }
 
-function mapDefinition(dfn: WebrefDfn, term: string, spec: string, series: string) {
+function mapDefinition(dfn: WebrefDfn, term: string, spec: string, series: string, specurl: string) {
   const normalizedType = CSS_TYPES_INPUT.has(dfn.type) ? `css-${dfn.type}` : dfn.type;
   return {
     term: normalizeTerm(term, normalizedType),
@@ -158,7 +159,7 @@ function mapDefinition(dfn: WebrefDfn, term: string, spec: string, series: strin
     spec,
     shortname: series,
     status: "current",
-    uri: '#' + dfn.id, // This is full URL to term here
+    uri: dfn.href.replace(specurl, ''), // This is full URL to term here
     normative: !dfn.informative,
     for: dfn.for.length > 0 ? dfn.for : undefined,
   };
@@ -229,6 +230,7 @@ async function getSpecsData() {
       dfnSources.add({
         series: entry.series.shortname,
         spec: entry.shortname,
+        url: entry.nightly.url,
         dfns
       });
     }
