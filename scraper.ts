@@ -201,7 +201,6 @@ async function getSpecsData() {
     };
   }
 
-  const urls = [...specUrls].sort();
   return { urls, specMap, dfnSources };
 }
 
