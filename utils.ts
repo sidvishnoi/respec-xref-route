@@ -1,4 +1,5 @@
 import { createHash } from 'crypto';
+import { exec, ProcessEnvOptions } from 'child_process';
 
 /**
  * Generate intelligent variations of the term
@@ -117,5 +118,54 @@ export class Cache<K, V> {
 
   clear() {
     this.#map.clear();
+  }
+}
+
+interface ShOptions extends ProcessEnvOptions {
+  output?: 'buffer' | 'stream' | 'silent';
+}
+/**
+ * Asynchronously run a shell command and get its result.
+ * @throws {Promise<{ stdout: string, stderr: string, code: number }>}
+ */
+export function sh(command: string, options: ShOptions = {}) {
+  const BOLD = '\x1b[1m';
+  const RESET = '\x1b[22m';
+  const { output, ...execOptions } = options;
+
+  if (output !== 'silent') {
+    console.group(`${BOLD}$ ${command}${RESET}`);
+  }
+
+  try {
+    return new Promise<string>((resolve, reject) => {
+      let stdout = '';
+      let stderr = '';
+      const child = exec(command, { encoding: 'utf-8', ...execOptions });
+      child.stdout!.on('data', chunk => {
+        if (output === 'stream') process.stdout.write(chunk);
+        stdout += chunk;
+      });
+      child.stderr!.on('data', chunk => {
+        if (output === 'stream') process.stderr.write(chunk);
+        stderr += chunk;
+      });
+      child.on('exit', code => {
+        stdout = stdout.trim();
+        stderr = stderr.trim();
+        if (output === 'buffer') {
+          if (stdout) console.log(stdout);
+          if (stderr) console.error(stderr);
+        }
+        if (output && output !== 'silent') {
+          console.log();
+        }
+        code === 0 ? resolve(stdout) : reject({ stdout, stderr, code });
+      });
+    });
+  } finally {
+    if (output !== 'silent') {
+      console.groupEnd();
+    }
   }
 }
