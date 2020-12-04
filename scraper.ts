@@ -9,6 +9,7 @@ import { spawn } from 'child_process';
 import { SUPPORTED_TYPES, DATA_DIR, CSS_TYPES_INPUT } from './constants';
 import { uniq } from './utils';
 import { Store } from './store';
+import { Definition as InputDfn, DfnsJSON, SpecsJSON } from 'webref';
 
 const { readdir, readFile, writeFile } = fs;
 
@@ -21,26 +22,6 @@ const OUTFILE_BY_SPEC = resolvePath(OUT_DIR_BASE, './specs.json');
 const OUTFILE_SPECMAP = resolvePath(OUT_DIR_BASE, './specmap.json');
 
 type ParsedDataEntry = ReturnType<typeof parseData>[0];
-
-interface DfnSource {
-  series: string;
-  spec: string;
-  url: string;
-  dfns: Array<WebrefDfn>;
-}
-
-interface WebrefDfn {
-  id: string;
-  href: string;
-  linkingText: Array<string>;
-  localLinkingText: Array<string>;
-  type: string;
-  for: Array<string>;
-  access: string;
-  informative: boolean;
-  heading: object;
-  definedIn: string;
-}
 
 interface DataByTerm {
   [term: string]: Omit<ParsedDataEntry, 'term' | 'isExported'>[];
@@ -120,7 +101,7 @@ function updateInputSource() {
  *
  * @param source content of an dfns data file
  */
-function parseData(source: DfnSource) {
+function parseData(source: DfnsJSON) {
   const dfns = source.dfns;
   const termData = [];
   for (const dfn of dfns) {
@@ -137,7 +118,7 @@ function parseData(source: DfnSource) {
   return uniq(filtered);
 }
 
-function mapDefinition(dfn: WebrefDfn, term: string, spec: string, series: string, specurl: string) {
+function mapDefinition(dfn: InputDfn, term: string, spec: string, series: string, specurl: string) {
   const normalizedType = CSS_TYPES_INPUT.has(dfn.type) ? `css-${dfn.type}` : dfn.type;
   return {
     term: normalizeTerm(term, normalizedType),
@@ -185,29 +166,12 @@ function normalizeTerm(term: string, type: string) {
 
 async function getSpecsData() {
   log(`Getting spec metadata from ${SPECS_JSON}`);
-  interface SpecVersion {
-    url: string;
-  }
-  interface SpecSeries {
-    shortname: string;
-    currentSpecification: string;
-  }
-  interface SpecsJSON {
-    url: string;
-    shortname: string;
-    nightly: SpecVersion;
-    release?: SpecVersion;
-    series: SpecSeries;
-    title: string;
-    dfns?: string;
-  }
-
   const urlFileContent = await readFile(SPECS_JSON, 'utf8');
   const data: Array<SpecsJSON> = JSON.parse(urlFileContent).results;
 
   const specMap: Store['specmap'] = Object.create(null);
   const specUrls = new Set<string>();
-  const dfnSources = new Set<DfnSource>();
+  const dfnSources = new Set<DfnsJSON>();
 
   for (const entry of data) {
     specUrls.add(entry.nightly.url);
