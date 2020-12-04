@@ -174,7 +174,7 @@ function normalizeTerm(term: string, type: string) {
 async function getSpecsData() {
   log(`Getting spec metadata from ${SPECS_JSON}`);
   const urlFileContent = await readJSON(SPECS_JSON);
-  const data: Array<SpecsJSON> = urlFileContent.results;
+  const data: SpecsJSON[] = urlFileContent.results;
 
   const specMap: Store['specmap'] = Object.create(null);
   const specUrls = new Set<string>();
