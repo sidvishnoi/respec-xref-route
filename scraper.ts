@@ -180,7 +180,7 @@ async function getSpecsData() {
 
   for (const entry of data) {
     specUrls.add(entry.nightly.url);
-    if (entry.release && entry.release.url) specUrls.add(entry.release.url);
+    if (entry.release?.url) specUrls.add(entry.release.url);
     if (entry.dfns) {
       const dfnsData = await readJSON(joinPath(INPUT_DIR_BASE, entry.dfns));
       const dfns: InputDfn[] = dfnsData.dfns;
