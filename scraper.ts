@@ -1,4 +1,4 @@
-// Reads and parses anchor data files from webref repository and writes:
+// Reads and parses definition data files from webref repository and writes:
 // - xref.json containing parsed and formatted data by term
 // - specs.json having data by spec shortname
 // - specmap.json having spec details
