@@ -5,9 +5,8 @@
 
 import { promises as fs, existsSync } from 'fs';
 import { resolve as resolvePath, join as joinPath } from 'path';
-import { spawn } from 'child_process';
 import { SUPPORTED_TYPES, DATA_DIR, CSS_TYPES_INPUT } from './constants';
-import { uniq } from './utils';
+import { sh, uniq } from './utils';
 import { Store } from './store';
 import { Definition as InputDfn, DfnsJSON, SpecsJSON } from 'webref';
 
@@ -71,29 +70,15 @@ export async function main(options: Partial<Options> = {}) {
   return true;
 }
 
-function updateInputSource() {
+async function updateInputSource() {
   const shouldClone = !existsSync(INPUT_DIR_BASE);
-  const args = shouldClone
-    ? ['clone', 'https://github.com/w3c/webref.git']
-    : ['pull', 'origin', 'master'];
+  const command = shouldClone
+    ? `git clone https://github.com/w3c/webref.git --progress`
+    : 'git pull origin master';
   const cwd = shouldClone ? DATA_DIR : INPUT_DIR_BASE;
-
-  return new Promise<boolean>((resolve, reject) => {
-    log('Pulling latest changes...');
-    const git = spawn('git', args, { cwd });
-    let hasUpdated = true;
-    git.stdout.on('data', (data: ArrayBuffer) => {
-      hasUpdated = !data.toString().includes('Already up to date');
-    });
-    git.on('error', reject);
-    git.on('exit', (code: number) => {
-      if (code !== 0) {
-        reject(new Error(`The process exited with code ${code}`));
-      } else {
-        resolve(hasUpdated);
-      }
-    });
-  });
+  const stdout = await sh(command, { output: 'stream', cwd });
+  const didUpdate = !stdout.includes('Already up to date')
+  return didUpdate;
 }
 
 /**
