@@ -46,7 +46,7 @@ export async function main(options: Partial<Options> = {}) {
     return false;
   }
 
-  const { specMap, dfnSources } = await getSpecsData();
+  const { specMap, dfnSources } = await getAllData();
 
   const dataByTerm: DataByTerm = Object.create(null);
   const dataBySpec: DataBySpec = Object.create(null);
@@ -171,8 +171,8 @@ function normalizeTerm(term: string, type: string) {
   return term;
 }
 
-async function getSpecsData() {
-  log(`Getting spec metadata from ${SPECS_JSON}`);
+async function getAllData() {
+  log(`Getting data from ${SPECS_JSON}`);
   const urlFileContent = await readJSON(SPECS_JSON);
   const data: SpecsJSON[] = urlFileContent.results;
 
