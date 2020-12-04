@@ -69,24 +69,16 @@ export async function main(options: Partial<Options> = {}) {
 
   const dataByTerm: DataByTerm = Object.create(null);
   const dataBySpec: DataBySpec = Object.create(null);
-  const errorURIs: string[] = [];
   log(`Processing ${dfnSources.size} files...`);
   for (let source of dfnSources) {
     try {
-      const terms = parseData(source, errorURIs);
+      const terms = parseData(source);
       updateDataByTerm(terms, dataByTerm);
       updateDataBySpec(terms, dataBySpec);
     } catch (error) {
       logError(`Error while processing ${source.spec}`);
       throw error;
     }
-  }
-
-  if (errorURIs.length) {
-    // ideally never happens. keeping it to prevent database corruption.
-    const msg = `[fixURI]: Failed to resolve base url. (x${errorURIs.length})`;
-    logError(msg, '\n', errorURIs.join('\n'));
-    process.exit(1);
   }
 
   log('Writing processed data files...');
@@ -125,15 +117,10 @@ function updateInputSource() {
 
 /**
  * Parse and format the contents of webref dfn files
- * <https://github.com/tabatkins/bikeshed-data/blob/master/data/anchors/>
  *
- * @param content content of an anchors data file
- * @param errorURIs list of uri where fixUri fails
- *
- * The parsing is based on the file format specified at
- * <https://github.com/tabatkins/bikeshed/blob/0da7328/bikeshed/update/updateCrossRefs.py#L313-L328>
+ * @param source content of an dfns data file
  */
-function parseData(source: DfnSource, errorURIs: string[]) {
+function parseData(source: DfnSource) {
   const dfns = source.dfns;
   const termData = [];
   for (const dfn of dfns) {
