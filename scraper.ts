@@ -102,11 +102,12 @@ function updateInputSource() {
  * @param source content of an dfns data file
  */
 function parseData(source: DfnsJSON) {
-  const dfns = source.dfns;
+  const { dfns, spec, series, url } = source;
+  const specMetaData = { spec, shortname: series, url };
   const termData = [];
   for (const dfn of dfns) {
     for (const term of dfn.linkingText) {
-      const mapped = mapDefinition(dfn, term, source.spec, source.series, source.url);
+      const mapped = mapDefinition(dfn, term, specMetaData);
       termData.push(mapped);
     }
   }
@@ -118,16 +119,20 @@ function parseData(source: DfnsJSON) {
   return uniq(filtered);
 }
 
-function mapDefinition(dfn: InputDfn, term: string, spec: string, series: string, specurl: string) {
+function mapDefinition(
+  dfn: InputDfn,
+  term: string,
+  spec: Record<'spec' | 'shortname' | 'url', string>,
+) {
   const normalizedType = CSS_TYPES_INPUT.has(dfn.type) ? `css-${dfn.type}` : dfn.type;
   return {
     term: normalizeTerm(term, normalizedType),
     isExported: dfn.access === 'public',
     type: normalizedType,
-    spec,
-    shortname: series,
+    spec: spec.spec,
+    shortname: spec.shortname,
     status: "current",
-    uri: dfn.href.replace(specurl, ''), // This is full URL to term here
+    uri: dfn.href.replace(spec.url, ''), // This is full URL to term here
     normative: !dfn.informative,
     for: dfn.for.length > 0 ? dfn.for : undefined,
   };
