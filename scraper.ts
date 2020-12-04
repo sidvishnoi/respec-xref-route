@@ -195,7 +195,7 @@ async function getAllData() {
     }
 
     specMap[entry.shortname] = {
-      url: entry.nightly.url || (entry.release ? entry.release.url : entry.url),
+      url: entry.nightly.url || entry.release?.url || entry.url,
       title: entry.title,
       shortname: entry.shortname,
     };
