@@ -11,7 +11,7 @@ import { uniq } from './utils';
 import { Store } from './store';
 import { Definition as InputDfn, DfnsJSON, SpecsJSON } from 'webref';
 
-const { readdir, readFile, writeFile } = fs;
+const { readFile, writeFile } = fs;
 
 const INPUT_DIR_BASE = joinPath(DATA_DIR, 'webref', 'ed');
 const SPECS_JSON = resolvePath(INPUT_DIR_BASE, './index.json');
@@ -51,7 +51,7 @@ export async function main(options: Partial<Options> = {}) {
   const dataByTerm: DataByTerm = Object.create(null);
   const dataBySpec: DataBySpec = Object.create(null);
   log(`Processing ${dfnSources.size} files...`);
-  for (let source of dfnSources) {
+  for (const source of dfnSources) {
     try {
       const terms = parseData(source);
       updateDataByTerm(terms, dataByTerm);
@@ -124,14 +124,16 @@ function mapDefinition(
   term: string,
   spec: Record<'spec' | 'shortname' | 'url', string>,
 ) {
-  const normalizedType = CSS_TYPES_INPUT.has(dfn.type) ? `css-${dfn.type}` : dfn.type;
+  const normalizedType = CSS_TYPES_INPUT.has(dfn.type)
+    ? `css-${dfn.type}`
+    : dfn.type;
   return {
     term: normalizeTerm(term, normalizedType),
     isExported: dfn.access === 'public',
     type: normalizedType,
     spec: spec.spec,
     shortname: spec.shortname,
-    status: "current",
+    status: 'current',
     uri: dfn.href.replace(spec.url, ''), // This is full URL to term here
     normative: !dfn.informative,
     for: dfn.for.length > 0 ? dfn.for : undefined,
@@ -188,7 +190,7 @@ async function getSpecsData() {
         series: entry.series.shortname,
         spec: entry.shortname,
         url: entry.nightly.url,
-        dfns
+        dfns,
       });
     }
 
