@@ -46,7 +46,7 @@ export async function main(options: Partial<Options> = {}) {
     return false;
   }
 
-  const { specMap, urls, dfnSources } = await getSpecsData();
+  const { specMap, dfnSources } = await getSpecsData();
 
   const dataByTerm: DataByTerm = Object.create(null);
   const dataBySpec: DataBySpec = Object.create(null);
@@ -201,7 +201,7 @@ async function getSpecsData() {
     };
   }
 
-  return { urls, specMap, dfnSources };
+  return { specMap, dfnSources };
 }
 
 async function readJSON(filePath: string) {
