@@ -116,8 +116,8 @@ function mapDefinition(
     term: normalizeTerm(term, normalizedType),
     isExported: dfn.access === 'public',
     type: normalizedType,
-    spec: spec.spec,
-    shortname: spec.shortname,
+    spec: spec.spec.toLowerCase(),
+    shortname: spec.shortname.toLowerCase(),
     status: 'current',
     uri: dfn.href.replace(spec.url, ''), // This is full URL to term here
     normative: !dfn.informative,
@@ -153,6 +153,9 @@ function normalizeTerm(term: string, type: string) {
   if (type === 'method' && !term.endsWith(')')) {
     return term + '()';
   }
+  if (type === "dfn") {
+    return term.toLowerCase();
+  }
   return term;
 }
 
@@ -179,10 +182,10 @@ async function getAllData() {
       });
     }
 
-    specMap[entry.shortname] = {
+    specMap[entry.shortname.toLowerCase()]
       url: entry.nightly.url || entry.release?.url || entry.url,
       title: entry.title,
-      shortname: entry.shortname,
+      shortname: entry.series.shortname.toLowerCase(),
     };
   }
 
