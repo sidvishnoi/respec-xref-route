@@ -182,7 +182,7 @@ async function getAllData() {
       });
     }
 
-    specMap[entry.shortname.toLowerCase()]
+    specMap[entry.shortname.toLowerCase()] = {
       url: entry.nightly.url || entry.release?.url || entry.url,
       title: entry.title,
       shortname: entry.series.shortname.toLowerCase(),
