@@ -1,5 +1,19 @@
 # Changelog
 
+## [v8.0.0](https://github.com/sidvishnoi/respec-xref-route/tree/v8.0.0) (2020-12-07)
+
+[Full Changelog](https://github.com/sidvishnoi/respec-xref-route/compare/v7.1.0...v8.0.0)
+
+**Closed issues:**
+
+- Use reffy data [\#69](https://github.com/sidvishnoi/respec-xref-route/issues/69)
+
+**Merged pull requests:**
+
+- BREAKING CHANGE: use definitions data from w3c/webref [\#70](https://github.com/sidvishnoi/respec-xref-route/pull/70)  ([dontcallmedom](https://github.com/dontcallmedom), [sidvishnoi](https://github.com/sidvishnoi))
+- refactor\(scraper\): use sh util to run shell commands [\#72](https://github.com/sidvishnoi/respec-xref-route/pull/72) ([sidvishnoi](https://github.com/sidvishnoi))
+- chore\(ci\): simplify and sync-up workflows [\#65](https://github.com/sidvishnoi/respec-xref-route/pull/65) ([sidvishnoi](https://github.com/sidvishnoi))
+
 ## [v7.1.0](https://github.com/sidvishnoi/respec-xref-route/tree/v7.1.0) (2020-06-04)
 
 [Full Changelog](https://github.com/sidvishnoi/respec-xref-route/compare/v7.0.0...v7.1.0)
