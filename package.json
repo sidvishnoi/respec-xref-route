@@ -25,9 +25,7 @@
     "test": "jest",
     "test:nobuild": "jest"
   },
-  "dependencies": {
-    "compact-prefix-tree": "^2.0.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^14.14.10",
     "jest": "^26.6.3",
