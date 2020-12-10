@@ -1,5 +1,5 @@
 import { QUERY_CACHE_DURATION, IDL_TYPES, CONCEPT_TYPES } from './constants.js';
-import { store } from './store';
+import { store } from './store.js';
 import { objectHash, pickFields, textVariations, Cache } from './utils.js';
 
 type Type =
