@@ -1,4 +1,4 @@
-const { search: _search, cache } = require('../search');
+const { search: _search, cache } = require('./build/search');
 
 /**
  * @param {import('../search').Query} query
@@ -9,7 +9,7 @@ const search = (query, options) => {
   return response.result[0][1];
 };
 
-jest.mock('../store', () => ({
+jest.mock('./build/store', () => ({
   store: {
     byTerm: require('./data'),
   },

@@ -16,12 +16,13 @@
   "license": "MIT",
   "author": "Sid Vishnoi <sidvishnoi8@gmail.com>",
   "main": "search.js",
+  "type": "module",
   "scripts": {
     "build": "tsc -d",
-    "clean": "rm -rf *.js *.d.ts",
+    "clean": "rm -rf *.js *.d.ts __tests__/build",
     "dev": "tsc -w",
     "prepare": "npm run build",
-    "pretest": "tsc --sourceMap",
+    "pretest": "tsc --sourceMap --module commonjs --outDir __tests__/build/",
     "test": "jest",
     "test:nobuild": "jest"
   },

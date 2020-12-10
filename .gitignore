@@ -8,3 +8,4 @@ coverage
 *.map
 !@types/**/*.d.ts
 !__tests__/**/*.js
+__tests__/build
