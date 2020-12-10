@@ -1,5 +1,13 @@
 # Changelog
 
+## [v9.0.0](https://github.com/sidvishnoi/respec-xref-route/tree/v9.0.0) (2020-12-10)
+
+[Full Changelog](https://github.com/sidvishnoi/respec-xref-route/compare/v8.0.0...v9.0.0)
+
+**Merged pull requests:**
+
+- chore\(CHANGELOG\): regenerate [\#74](https://github.com/sidvishnoi/respec-xref-route/pull/74) ([github-actions[bot]](https://github.com/apps/github-actions))
+
 ## [v8.0.0](https://github.com/sidvishnoi/respec-xref-route/tree/v8.0.0) (2020-12-07)
 
 [Full Changelog](https://github.com/sidvishnoi/respec-xref-route/compare/v7.1.0...v8.0.0)
@@ -10,7 +18,7 @@
 
 **Merged pull requests:**
 
-- BREAKING CHANGE: use definitions data from w3c/webref [\#70](https://github.com/sidvishnoi/respec-xref-route/pull/70)  ([dontcallmedom](https://github.com/dontcallmedom), [sidvishnoi](https://github.com/sidvishnoi))
+- chore\(CHANGELOG\): regenerate [\#73](https://github.com/sidvishnoi/respec-xref-route/pull/73) ([github-actions[bot]](https://github.com/apps/github-actions))
 - refactor\(scraper\): use sh util to run shell commands [\#72](https://github.com/sidvishnoi/respec-xref-route/pull/72) ([sidvishnoi](https://github.com/sidvishnoi))
 - chore\(ci\): simplify and sync-up workflows [\#65](https://github.com/sidvishnoi/respec-xref-route/pull/65) ([sidvishnoi](https://github.com/sidvishnoi))
 
@@ -24,7 +32,6 @@
 
 **Merged pull requests:**
 
-- chore\(ci/changelog\): automate changelog generation [\#66](https://github.com/sidvishnoi/respec-xref-route/pull/66) ([sidvishnoi](https://github.com/sidvishnoi))
 - feat: support css types [\#64](https://github.com/sidvishnoi/respec-xref-route/pull/64) ([sidvishnoi](https://github.com/sidvishnoi))
 
 ## [v7.0.0](https://github.com/sidvishnoi/respec-xref-route/tree/v7.0.0) (2020-05-26)
@@ -112,7 +119,6 @@
 **Merged pull requests:**
 
 - fix\(search\): caching regression causing ambiguities [\#47](https://github.com/sidvishnoi/respec-xref-route/pull/47) ([sidvishnoi](https://github.com/sidvishnoi))
-- feat\(search\): make forContext explicit [\#41](https://github.com/sidvishnoi/respec-xref-route/pull/41) ([sidvishnoi](https://github.com/sidvishnoi))
 
 ## [v6.0.2](https://github.com/sidvishnoi/respec-xref-route/tree/v6.0.2) (2019-08-16)
 
@@ -201,6 +207,7 @@
 
 **Merged pull requests:**
 
+- feat\(search\): make forContext explicit [\#41](https://github.com/sidvishnoi/respec-xref-route/pull/41) ([sidvishnoi](https://github.com/sidvishnoi))
 - feat\(specmap\): Export spec to {url, shortname,title} map [\#34](https://github.com/sidvishnoi/respec-xref-route/pull/34) ([sidvishnoi](https://github.com/sidvishnoi))
 - feat: export supported types and data by spec [\#33](https://github.com/sidvishnoi/respec-xref-route/pull/33) ([sidvishnoi](https://github.com/sidvishnoi))
 
@@ -265,6 +272,10 @@
 
 - Set up cache middleware.  [\#7](https://github.com/sidvishnoi/respec-xref-route/issues/7)
 
+**Merged pull requests:**
+
+- BREAKING CHANGE: change response format [\#25](https://github.com/sidvishnoi/respec-xref-route/pull/25) ([sidvishnoi](https://github.com/sidvishnoi))
+
 ## [v3.0.0](https://github.com/sidvishnoi/respec-xref-route/tree/v3.0.0) (2019-04-09)
 
 [Full Changelog](https://github.com/sidvishnoi/respec-xref-route/compare/v2.3.0...v3.0.0)
@@ -279,7 +290,6 @@
 
 **Merged pull requests:**
 
-- feat\(scraper\): Get spec-urls from bikeshed data [\#22](https://github.com/sidvishnoi/respec-xref-route/pull/22) ([sidvishnoi](https://github.com/sidvishnoi))
 - chore\(spec-urls\): add more base URLs [\#21](https://github.com/sidvishnoi/respec-xref-route/pull/21) ([sidvishnoi](https://github.com/sidvishnoi))
 
 ## [v2.2.0](https://github.com/sidvishnoi/respec-xref-route/tree/v2.2.0) (2019-03-17)
@@ -294,7 +304,7 @@
 
 **Merged pull requests:**
 
-- BREAKING CHANGE: change response format [\#25](https://github.com/sidvishnoi/respec-xref-route/pull/25) ([sidvishnoi](https://github.com/sidvishnoi))
+- feat\(scraper\): Get spec-urls from bikeshed data [\#22](https://github.com/sidvishnoi/respec-xref-route/pull/22) ([sidvishnoi](https://github.com/sidvishnoi))
 - feat\(scraper\): normalize enum-value keys [\#20](https://github.com/sidvishnoi/respec-xref-route/pull/20) ([sidvishnoi](https://github.com/sidvishnoi))
 - chore\(package\): bump version [\#19](https://github.com/sidvishnoi/respec-xref-route/pull/19) ([marcoscaceres](https://github.com/marcoscaceres))
 - fix: add missing short name to defaultOptions [\#18](https://github.com/sidvishnoi/respec-xref-route/pull/18) ([marcoscaceres](https://github.com/marcoscaceres))
@@ -321,10 +331,6 @@
 - Throw if fix-url fails [\#14](https://github.com/sidvishnoi/respec-xref-route/issues/14)
 - Expose .route prop  [\#13](https://github.com/sidvishnoi/respec-xref-route/issues/13)
 
-**Merged pull requests:**
-
-- BREAKING: fail if fixURI fails, instead of warning [\#15](https://github.com/sidvishnoi/respec-xref-route/pull/15) ([sidvishnoi](https://github.com/sidvishnoi))
-
 ## [1.0.1](https://github.com/sidvishnoi/respec-xref-route/tree/1.0.1) (2018-11-24)
 
 [Full Changelog](https://github.com/sidvishnoi/respec-xref-route/compare/v1.0.0...1.0.1)
@@ -340,6 +346,7 @@
 
 **Merged pull requests:**
 
+- BREAKING: fail if fixURI fails, instead of warning [\#15](https://github.com/sidvishnoi/respec-xref-route/pull/15) ([sidvishnoi](https://github.com/sidvishnoi))
 - Convert to use as a dependency [\#11](https://github.com/sidvishnoi/respec-xref-route/pull/11) ([sidvishnoi](https://github.com/sidvishnoi))
 - feat: Add xref api [\#3](https://github.com/sidvishnoi/respec-xref-route/pull/3) ([sidvishnoi](https://github.com/sidvishnoi))
 - Stuff [\#2](https://github.com/sidvishnoi/respec-xref-route/pull/2) ([marcoscaceres](https://github.com/marcoscaceres))
