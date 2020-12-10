@@ -1,6 +1,6 @@
 {
   "name": "respec-xref-route",
-  "version": "9.0.0",
+  "version": "9.0.1",
   "description": "Keyword based search API for CSSWG's Shepherd data, used in ReSpec.",
   "keywords": [
     "csswg",
