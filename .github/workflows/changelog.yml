@@ -1,7 +1,8 @@
 name: Changelog
 on:
   workflow_dispatch: {}
-  release: {}
+  release:
+    types: [published]
 
 jobs:
   changelog:
