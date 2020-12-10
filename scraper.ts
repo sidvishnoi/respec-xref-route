@@ -5,6 +5,7 @@
 
 import { promises as fs, existsSync } from 'fs';
 import { resolve as resolvePath, join as joinPath } from 'path';
+import esMain from 'es-main';
 import { SUPPORTED_TYPES, DATA_DIR, CSS_TYPES_INPUT } from './constants.js';
 import { sh, uniq } from './utils.js';
 import { Store } from './store.js';
@@ -197,7 +198,8 @@ async function readJSON(filePath: string) {
   return JSON.parse(text);
 }
 
-if (require.main === module) {
+// @ts-ignore
+if (esMain(import.meta)) {
   main({ forceUpdate: true }).catch(err => {
     console.error(err);
     process.exit(1);
