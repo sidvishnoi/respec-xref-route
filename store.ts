@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { resolve as resolvePath } from 'path';
-import { DATA_DIR } from './constants';
-import { DataEntry } from './search';
+import { DATA_DIR } from './constants.js';
+import { DataEntry } from './search.js';
 
 export interface Store {
   version: number;

@@ -5,9 +5,9 @@
 
 import { promises as fs, existsSync } from 'fs';
 import { resolve as resolvePath, join as joinPath } from 'path';
-import { SUPPORTED_TYPES, DATA_DIR, CSS_TYPES_INPUT } from './constants';
-import { sh, uniq } from './utils';
-import { Store } from './store';
+import { SUPPORTED_TYPES, DATA_DIR, CSS_TYPES_INPUT } from './constants.js';
+import { sh, uniq } from './utils.js';
+import { Store } from './store.js';
 import { Definition as InputDfn, DfnsJSON, SpecsJSON } from 'webref';
 
 const { readFile, writeFile } = fs;
