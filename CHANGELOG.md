@@ -1,5 +1,14 @@
 # Changelog
 
+## [v9.0.0](https://github.com/sidvishnoi/respec-xref-route/tree/v9.0.0) (2020-12-10)
+
+[Full Changelog](https://github.com/sidvishnoi/respec-xref-route/compare/v8.0.0...v9.0.0)
+
+**Breaking changes:**
+
+- Migrate from CommonJS to ESM [`4ad321f`](https://github.com/sidvishnoi/respec-xref-route/commit/4ad321ff76a61bd578fe2c0b822db739dfa05851)
+
+
 ## [v8.0.0](https://github.com/sidvishnoi/respec-xref-route/tree/v8.0.0) (2020-12-07)
 
 [Full Changelog](https://github.com/sidvishnoi/respec-xref-route/compare/v7.1.0...v8.0.0)
