@@ -26,7 +26,9 @@
     "test": "jest",
     "test:nobuild": "jest"
   },
-  "dependencies": {},
+  "dependencies": {
+    "es-main": "^1.0.2"
+  },
   "devDependencies": {
     "@types/node": "^14.14.12",
     "jest": "^26.6.3",
