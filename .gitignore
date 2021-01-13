@@ -9,3 +9,4 @@ coverage
 !@types/**/*.d.ts
 !__tests__/**/*.js
 __tests__/build
+!scripts/*.js
